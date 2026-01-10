@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "إنشاء حساب جديد - AutismTracker" %}{% endblock %}
+{% block body_class %}bg-slate-50 min-h-screen{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
+    <div class="max-w-md w-full">
+        <div class="bg-white rounded-2xl shadow-xl p-8 hover-lift transition-smooth">
+            <div class="text-center mb-6">
+                <h2 class="text-3xl font-bold text-slate-800">{% trans "إنشاء حساب جديد" %}</h2>
+                <p class="text-slate-600">{% trans "انضم إلى AutismTracker ." %}</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-rose-50 border border-rose-200 text-rose-700{% else %}bg-emerald-50 border border-emerald-200 text-emerald-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" id="signup-form" class="space-y-5" novalidate>
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">{% trans "الاسم" %}</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value="{{ request.POST.username }}"
+                        required
+                        minlength="3"
+                        placeholder="{% trans 'أدخل اسم المستخدم' %}"
+                        class="w-full px-4 py-3 border rounded-lg focus:ring-teal-400"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">{% trans "البريد الإلكتروني" %}</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ request.POST.email }}"
+                        required
+                        placeholder="{% trans 'أدخل البريد الإلكتروني' %}"
+                        class="w-full px-4 py-3 border rounded-lg"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">{% trans "رقم الهاتف (اختياري)" %}</label>
+                    <input
+                        type="tel"
+                        name="phone"
+                        value="{{ request.POST.phone }}"
+                        placeholder="962501234567"
+                        class="w-full px-4 py-3 border rounded-lg"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">{% trans "كلمة المرور" %}</label>
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        minlength="6"
+                        placeholder="{% trans 'أدخل كلمة المرور' %}"
+                        class="w-full px-4 py-3 border rounded-lg"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">{% trans "تأكيد كلمة المرور" %}</label>
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        required
+                        minlength="6"
+                        placeholder="{% trans 'أعد إدخال كلمة المرور' %}"
+                        class="w-full px-4 py-3 border rounded-lg"
+                    >
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg transition">
+                    {% trans "إنشاء الحساب" %}
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-slate-600">
+                    {% trans "هل لديك حساب بالفعل؟" %}
+                    <a href="{% url 'core:login' %}" class="text-teal-600 hover:text-teal-700 font-medium">
+                        {% trans "تسجيل الدخول" %}
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("signup-form").addEventListener("submit", function (e) {
+    const username = this.username.value.trim();
+    const email = this.email.value.trim();
+    const password = this.password.value;
+    const confirm = this.confirm_password.value;
+
+    let valid = true;
+    if (!username || username.length < 3) valid = false;
+    if (!email.includes("@")) valid = false;
+    if (!password || password.length < 6) valid = false;
+    if (password !== confirm) valid = false;
+
+    if (!valid) {
+        e.preventDefault();
+        alert("{% trans 'يرجى ملء جميع الحقول بشكل صحيح.' %}");
+    }
+});
+</script>
+{% endblock %}
