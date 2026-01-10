@@ -1,7 +1,7 @@
 name: Prod CI/CD
 
 on:
-  pull_request:
+  push:
     branches: ["main"]
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         run: pytest -v --disable-warnings
 
       - name: Run Security Scan
-        run: bandit -r .
+        run: bandit -r . -x ./.venv,./core/tests.py
 
   docker-build:
     runs-on: ubuntu-latest
