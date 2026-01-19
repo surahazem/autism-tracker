@@ -77,8 +77,8 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "autism_tracker",
         "USER": "postgres",
-        "PASSWORD": "123456",
-        "HOST": "localhost",
+        "PASSWORD": os.getenv('DB_Password','123456'),
+        "HOST": os.getenv('DB_Host','localhost'),
         "PORT": "5432",
     }
 }
