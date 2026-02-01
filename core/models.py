@@ -16,7 +16,7 @@ class User(AbstractUser):
         unique=True,
     )
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["username"]
 
 class Clinic(BaseModel):
     name = models.CharField(max_length=255)
