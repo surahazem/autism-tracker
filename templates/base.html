@@ -1,49 +1,111 @@
-{% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
-{% get_available_languages as LANGUAGES %}
-{% get_language_info_list for LANGUAGES as languages %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% trans "AutismTracker" %}{% endblock %}</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% trans "Namaa" %}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind = {};
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['Inter', 'IBM Plex Sans Arabic', 'sans-serif'],
+          },
+          colors: {
+            sage: {
+              50: '#f6f7f6',
+              100: '#e3e7e4',
+              200: '#c6d0c9',
+              300: '#a2b1a6',
+              400: '#7c9a8e',
+              500: '#5d7d6e',
+              600: '#496358',
+              700: '#3c5048',
+              800: '#33423c',
+              900: '#2c3833'
+            },
+            cream: {
+              50: '#fdfcfb',
+              100: '#f5f1eb',
+              200: '#e8e0d5'
+            },
+            sky: {
+              300: '#a8c5da',
+              400: '#6b9ecf'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <style>
+    [dir="rtl"] .font-sans {
+      font-family: 'IBM Plex Sans Arabic', sans-serif;
+    }
+  </style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="bg-cream-100 min-h-screen">
+  {% if messages %}
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-3 pointer-events-none">
+      {% for message in messages %}
+        <div class="toast-item pointer-events-auto bg-white rounded-xl shadow-2xl border-l-4 p-4 min-w-[300px] flex items-center justify-between gap-4 animate-slide-in
+          {% if message.tags == 'success' %}border-sage-500{% else %}border-red-500{% endif %}">
+          <div class="flex items-center gap-3">
+            {% if message.tags == 'success' %}
+              <div class="w-8 h-8 bg-sage-100 text-sage-600 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+            {% else %}
+              <div class="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </div>
+            {% endif %}
+            <p class="text-sm font-medium text-gray-700">{{ message }}</p>
+          </div>
+          <button onclick="this.closest('.toast-item').remove()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
 
     <style>
-        body {
-            font-family: {% if LANGUAGE_CODE == 'ar' %}'Noto Sans Arabic', sans-serif{% else %}'Inter', sans-serif{% endif %};
-        }
-        .transition-smooth { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
-        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-
-        input, select, textarea {
-            outline: none !important;
-            transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none !important;
-            border: 2px solid #0d9488 !important; /* Teal-600 */
-            box-shadow: 0 0 0 3px rgba(13,148,136,0.25) !important;
-        }
-        input:focus-visible, select:focus-visible, textarea:focus-visible {
-            outline: none !important;
-            border: 2px solid #0d9488 !important;
-            box-shadow: 0 0 0 3px rgba(13,148,136,0.25) !important;
-        }
-
-        {% block extra_css %}{% endblock %}
+      @keyframes slide-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      .animate-slide-in {
+        animation: slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
     </style>
 
-    {% block extra_head %}{% endblock %}
-</head>
-<body class="{% block body_class %}bg-slate-50 text-slate-700{% endblock %}">
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    {% block extra_js %}{% endblock %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const items = document.querySelectorAll('.toast-item');
+        items.forEach((item, index) => {
+          setTimeout(() => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(100%)';
+            item.style.transition = 'all 0.5s ease-in-out';
+            setTimeout(() => item.remove(), 500);
+          }, 5000 + (index * 500));
+        });
+      });
+    </script>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+  {% block scripts %}{% endblock %}
 </body>
 </html>
