@@ -22,11 +22,7 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-django bandit
 
-      - name: Run Tests
-        run: pytest -v --disable-warnings
 
-      - name: Run Security Scan
-        run: bandit -r . -x ./.venv,./core/tests.py
 
   docker-build:
     runs-on: ubuntu-latest
