@@ -16,6 +16,7 @@ urlpatterns = [
     path('therapist/sessions/', views.therapist_sessions_view, name='therapist_sessions'),
     path('therapist/sessions/<int:session_id>/cancel/', views.therapist_cancel_session_view, name='therapist_cancel_session'),
     path('therapist/sessions/<int:session_id>/submit/', views.therapist_submit_session_view, name='therapist_submit_session'),
-   
+    path('therapist/children/<int:child_id>/add-session/', views.therapist_add_session_view, name='therapist_add_session'),
+  
   
 ]
