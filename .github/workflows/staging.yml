@@ -21,14 +21,9 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-django bandit
-          
-      - name: Run Tests
-        run: |
-          pytest -v --disable-warnings
-          code=$?
-          if [ $code -ne 0 ] && [ $code -ne 5 ]; then
-            exit $code
-          fi
+
+      - name: Run Pytest
+        run: pytest -v --disable-warnings
 
       - name: Run Security Scan
         run: bandit -r . -x ./.venv,./core/tests.py
