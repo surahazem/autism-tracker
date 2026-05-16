@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from .models import (
-    Parent, User, Session, TreatmentPlan, Child, Form, Answer,
-    Therapist
+    Parent, User, Session, TreatmentPlan, Child, Form, Question, Answer,
+    Therapist, Diagnosis
 )
+from django.db.models import Q
 from django.contrib import messages
 from .serializers import RegistrationSerializer
 from django.contrib.auth import logout
@@ -330,4 +331,219 @@ def assessment_view(request):
     }
     
     return render(request, 'parent/developmental-assessment.html', context)
+
+
+def therapist_dashboard_view(request):
+    if not request.user.is_authenticated:
+        return redirect('core:login')
+    
+    try:
+        therapist = request.user.therapist_profile
+    except (AttributeError, Therapist.DoesNotExist):
+        messages.error(request, "You do not have a therapist profile.")
+        return redirect('core:index')
+
+    # Get therapist's data
+    managed_plans = therapist.managed_plans.all()
+    children = Child.objects.filter(treatment_plans__therapist=therapist).distinct()
+    sessions = Session.objects.filter(treatment_plan__therapist=therapist)
+    
+  
+    context = {
+        'therapist': therapist,
+        'managed_plans_count': managed_plans.count(),
+        'children_count': children.count(),
+        'upcoming_sessions_count': sessions.filter(status='scheduled').count(),
+        'completed_sessions_count': sessions.filter(status='completed').count(),
+        'recent_children': children.order_by('-created_at')[:5],
+        'upcoming_sessions': sessions.filter(status='scheduled').order_by('date')[:5],
+    }
+    
+    return render(request, 'therapist/dashboard.html', context)
+
+def parent_dashboard_view(request):
+    if not request.user.is_authenticated:
+        return redirect('core:login')
+    
+    try:
+        parent = request.user.parent_profile
+    except Parent.DoesNotExist:
+        # In case the user is not a parent, redirect or show error
+        messages.error(request, "You do not have a parent profile.")
+        return redirect('core:index')
+
+    children = parent.children.all()
+    children_count = children.count()
+    
+    # Get all treatment plans for these children (only active ones)
+    active_plans_count = TreatmentPlan.objects.filter(child__parents=parent, status='active').count()
+    
+    # Get sessions related to these children's plans
+    sessions = Session.objects.filter(treatment_plan__child__parents=parent)
+    upcoming_sessions_count = sessions.filter(status='scheduled').count()
+    completed_sessions_count = sessions.filter(status='completed').count()
+    
+    context = {
+        'children': children.order_by('-created_at')[:3],
+        'upcoming_sessions': sessions.filter(status='scheduled').order_by('date')[:3],
+        'children_count': children_count,
+        'active_plans_count': active_plans_count,
+        'upcoming_sessions_count': upcoming_sessions_count,
+        'completed_sessions_count': completed_sessions_count,
+    }
+    
+    return render(request, 'parent/dashboard.html', context)
+
+
+def therapist_add_session_view(request, child_id):
+    if not request.user.is_authenticated:
+        return redirect('core:login')
+    
+    try:
+        therapist = request.user.therapist_profile
+    except (AttributeError, Therapist.DoesNotExist):
+        messages.error(request, 'You do not have a therapist profile.')
+        return redirect('core:index')
+
+    child = get_object_or_404(Child, id=child_id)
+    active_plan = child.treatment_plans.filter(therapist=therapist, status='active').first()
+    
+    if not active_plan:
+        messages.error(request, 'No active plan found for this child. Please create a plan first.')
+        return redirect('core:therapist_children')
+
+    if request.method == 'POST':
+        # Logic to create a new session
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        notes = request.POST.get('notes', '')
+        
+        # Combine date and time
+        from django.utils.dateparse import parse_datetime
+        dt_str = f"{date} {time}"
+        
+        Session.objects.create(
+            treatment_plan=active_plan,
+            date=dt_str,
+            notes=notes,
+            status='scheduled'
+        )
+        messages.success(request, f'New session scheduled for {child.first_name}.')
+        return redirect('core:therapist_children')
+
+    context = {
+        'child': child,
+        'plan': active_plan,
+    }
+    return render(request, 'therapist/add_session.html', context)
+
+
+def therapist_sessions_view(request):
+    if not request.user.is_authenticated:
+        return redirect('core:login')
+    
+    try:
+        therapist = request.user.therapist_profile
+    except (AttributeError, Therapist.DoesNotExist):
+        messages.error(request, 'You do not have a therapist profile.')
+        return redirect('core:index')
+
+    # Status filter (default to 'scheduled')
+    status = request.GET.get('status', 'scheduled')
+    child_name = request.GET.get('child_name', '')
+
+    # Base queryset: sessions for plans managed by this therapist
+    sessions_qs = Session.objects.filter(treatment_plan__therapist=therapist)
+
+    # Filter by status if not 'all'
+    if status and status != 'all':
+        sessions_qs = sessions_qs.filter(status=status)
+    
+    # Filter by child name (text search)
+    if child_name:
+        sessions_qs = sessions_qs.filter(
+            Q(treatment_plan__child__first_name__icontains=child_name) |
+            Q(treatment_plan__child__last_name__icontains=child_name)
+        )
+
+    sessions = sessions_qs.order_by('date')
+
+    context = {
+        'sessions': sessions,
+        'selected_status': status,
+        'child_name': child_name,
+        'therapist': therapist,
+    }
+    
+    return render(request, 'therapist/sessions.html', context)
+
+def therapist_cancel_session_view(request, session_id):
+    if not request.user.is_authenticated:
+        return redirect('core:login')
+    
+    try:
+        therapist = request.user.therapist_profile
+    except (AttributeError, Therapist.DoesNotExist):
+        messages.error(request, 'You do not have a therapist profile.')
+        return redirect('core:index')
+
+    session = get_object_or_404(Session, id=session_id, treatment_plan__therapist=therapist)
+    
+    if session.status == 'scheduled':
+        session.status = 'cancelled'
+        session.save()
+        messages.success(request, f'Session for {session.treatment_plan.child.first_name} has been cancelled.')
+    else:
+        messages.error(request, 'Only scheduled sessions can be cancelled.')
+    
+    return redirect('core:therapist_sessions')
+
+def therapist_submit_session_view(request, session_id):
+    if not request.user.is_authenticated:
+        return redirect('core:login')
+    
+    try:
+        therapist = request.user.therapist_profile
+    except (AttributeError, Therapist.DoesNotExist):
+        messages.error(request, 'You do not have a therapist profile.')
+        return redirect('core:index')
+
+    session = get_object_or_404(Session, id=session_id, treatment_plan__therapist=therapist)
+    
+    if request.method == 'POST':
+        # 1. Update session notes and mark completed
+        notes = request.POST.get('notes', '')
+        session.notes = notes
+        session.status = 'completed'
+        session.save()
+        
+        # 2. Upsert single Diagnosis (one per plan)
+        diagnosis_status = request.POST.get('diagnosis_status', '').strip()
+        diagnosis_description = request.POST.get('diagnosis_description', '').strip()
+        if diagnosis_status or diagnosis_description:
+            diagnosis = session.treatment_plan.diagnoses.first()
+            if diagnosis:
+                diagnosis.status = diagnosis_status or diagnosis.status
+                diagnosis.description = diagnosis_description or diagnosis.description
+                diagnosis.save()
+            else:
+                Diagnosis.objects.create(
+                    treatment_plan=session.treatment_plan,
+                    status=diagnosis_status or 'Observation',
+                    description=diagnosis_description or ''
+                )
+
+        messages.success(request, f'Session for {session.treatment_plan.child.first_name} completed.')
+        return redirect('core:therapist_sessions')
+
+    # Load existing diagnosis for pre-fill
+    existing_diagnosis = session.treatment_plan.diagnoses.first()
+
+    context = {
+        'session': session,
+        'therapist': therapist,
+        'existing_diagnosis': existing_diagnosis,
+        'child_name': session.treatment_plan.child.first_name,
+    }
+    return render(request, 'therapist/submit_session.html', context)
 

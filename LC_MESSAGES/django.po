@@ -1,0 +1,1633 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-02 18:10+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: .\AutismTracker\settings.py:134
+msgid "English"
+msgstr "انجليزي"
+
+#: .\AutismTracker\settings.py:135
+msgid "Arabic"
+msgstr "عربي"
+
+#: .\core\views.py:891
+#, python-format
+msgid ""
+"The child covered only %(density)s%% of the canvas. This low engagement may "
+"suggest a withdrawn state."
+msgstr ""
+
+#: .\core\views.py:892
+msgid ""
+"The measured marks and balanced colors indicate a calm, emotionally "
+"regulated state."
+msgstr ""
+
+#: .\core\views.py:893
+msgid "Warm, bright colors reflect a joyful and happy emotional state."
+msgstr "الألوان الدافئة والمشرقة تعكس حالة عاطفية مليئة بالبهجة والسعادة."
+
+#: .\core\views.py:894
+#, python-format
+msgid ""
+"High activity detected (%(density)s%% coverage) with warm colors. This "
+"indicates high energy."
+msgstr ""
+
+#: .\core\views.py:895
+#, python-format
+msgid ""
+"Heavy canvas coverage (%(density)s%%) with darker tones may indicate the "
+"child is feeling overwhelmed."
+msgstr ""
+
+#: .\core\views.py:896
+msgid ""
+"A high proportion of dark or harsh tones suggests possible tension or "
+"anxious feelings."
+msgstr ""
+
+#: .\templates\auth\login.html:4 .\templates\index.html:62
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#: .\templates\auth\login.html:4 .\templates\auth\login.html:19
+#: .\templates\auth\register.html:4 .\templates\auth\register.html:18
+#: .\templates\base.html:9 .\templates\index.html:19 .\templates\index.html:405
+#: .\templates\parent\dashboard.html:4 .\templates\parent\profile.html:4
+#: .\templates\partials\parent_sidebar.html:10
+#: .\templates\partials\therapist_sidebar.html:16
+#: .\templates\therapist\dashboard.html:4
+msgid "Namaa"
+msgstr "نماء"
+
+#: .\templates\auth\login.html:25
+msgid "Welcome Back"
+msgstr "مرحباً بعودتك"
+
+#: .\templates\auth\login.html:26
+msgid "Sign in to continue to your dashboard"
+msgstr "سجل الدخول للمتابعة إلى لوحة التحكم الخاصة بك"
+
+#: .\templates\auth\login.html:34 .\templates\auth\register.html:46
+msgid "Email Address"
+msgstr "البريد الإلكتروني"
+
+#: .\templates\auth\login.html:41 .\templates\auth\register.html:67
+#, fuzzy
+#| msgid "Confirm Password"
+msgid "Password"
+msgstr "تأكيد كلمة المرور"
+
+#: .\templates\auth\login.html:45
+msgid "Enter your password"
+msgstr "أدخل كلمة المرور"
+
+#: .\templates\auth\login.html:78 .\templates\auth\register.html:124
+msgid "Sign In"
+msgstr "تسجيل الدخول"
+
+#: .\templates\auth\login.html:87
+msgid "Don't have an account?"
+msgstr "ليس لديك حساب؟"
+
+#: .\templates\auth\login.html:88
+msgid "Register as Parent"
+msgstr "تسجيل كولي أمر"
+
+#: .\templates\auth\login.html:97 .\templates\auth\register.html:141
+msgid "Back to Home"
+msgstr "العودة إلى الرئيسية"
+
+#: .\templates\auth\register.html:4 .\templates\index.html:63
+msgid "Register"
+msgstr "تسجيل جديد"
+
+#: .\templates\auth\register.html:24 .\templates\index.html:262
+msgid "Create Parent Account"
+msgstr "إنشاء حساب ولي أمر"
+
+#: .\templates\auth\register.html:25
+msgid "Join Namaa to support your child's journey"
+msgstr "انضم إلى نماء لدعم رحلة طفلك"
+
+#: .\templates\auth\register.html:33 .\templates\auth\register.html:34
+#: .\templates\parent\profile.html:69 .\templates\therapist\children.html:95
+#: .\templates\therapist\profile.html:58
+msgid "First Name"
+msgstr "الاسم الأول"
+
+#: .\templates\auth\register.html:38 .\templates\auth\register.html:39
+#: .\templates\parent\profile.html:74 .\templates\therapist\children.html:99
+#: .\templates\therapist\profile.html:63
+msgid "Last Name"
+msgstr "اسم العائلة"
+
+#: .\templates\auth\register.html:53 .\templates\parent\profile.html:86
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+#: .\templates\auth\register.html:60 .\templates\parent\profile.html:93
+msgid "Address"
+msgstr "العنوان"
+
+#: .\templates\auth\register.html:61
+msgid "Your home address"
+msgstr "عنوان منزلك"
+
+#: .\templates\auth\register.html:69
+msgid "Create a password"
+msgstr "أنشئ كلمة مرور"
+
+#: .\templates\auth\register.html:77
+msgid "Minimum 6 characters"
+msgstr "6 أحرف كحد أدنى"
+
+#: .\templates\auth\register.html:83
+msgid "Confirm Password"
+msgstr "تأكيد كلمة المرور"
+
+#: .\templates\auth\register.html:85
+msgid "Confirm your password"
+msgstr "أكد كلمة المرور"
+
+#: .\templates\auth\register.html:100
+msgid "I agree to the"
+msgstr "أنا أوافق على"
+
+#: .\templates\auth\register.html:100 .\templates\index.html:395
+msgid "Terms of Service"
+msgstr "شروط الخدمة"
+
+#: .\templates\auth\register.html:100
+msgid "and"
+msgstr "و"
+
+#: .\templates\auth\register.html:101 .\templates\index.html:392
+msgid "Privacy Policy"
+msgstr "سياسة الخصوصية"
+
+#: .\templates\auth\register.html:104
+msgid "You must agree to the terms"
+msgstr "يجب عليك الموافقة على الشروط"
+
+#: .\templates\auth\register.html:107
+msgid "Registration failed. Please try again."
+msgstr "فشل التسجيل. يرجى المحاولة مرة أخرى."
+
+#: .\templates\auth\register.html:110
+msgid "Account created successfully! Redirecting to login..."
+msgstr "تم إنشاء الحساب بنجاح! جاري التحويل إلى صفحة تسجيل الدخول..."
+
+#: .\templates\auth\register.html:113
+msgid "Create Account"
+msgstr "إنشاء حساب"
+
+#: .\templates\auth\register.html:123
+msgid "Already have an account?"
+msgstr "لديك حساب بالفعل؟"
+
+#: .\templates\auth\register.html:131
+msgid "Are you a therapist?"
+msgstr "هل أنت أخصائي؟"
+
+#: .\templates\auth\register.html:131
+msgid ""
+"Therapist accounts are created by clinic administrators. Please contact your "
+"clinic for access."
+msgstr ""
+
+#: .\templates\index.html:4
+msgid "Namaa - Autism Developmental Tracker"
+msgstr "نماء - متتبع نمو التوحد"
+
+#: .\templates\index.html:24 .\templates\index.html:356
+msgid "Features"
+msgstr "المميزات"
+
+#: .\templates\index.html:25
+msgid "About"
+msgstr "عن نماء"
+
+#: .\templates\index.html:26 .\templates\index.html:383
+msgid "Contact"
+msgstr "اتصل بنا"
+
+#: .\templates\index.html:49 .\templates\index.html:51
+#: .\templates\partials\parent_sidebar.html:19
+#: .\templates\partials\therapist_sidebar.html:26
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+#: .\templates\index.html:54 .\templates\index.html:56
+msgid "Profile"
+msgstr "الملف الشخصي"
+
+#: .\templates\index.html:58 .\templates\partials\parent_sidebar.html:66
+#: .\templates\partials\therapist_sidebar.html:61
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#: .\templates\index.html:75
+msgid "Supporting Developmental Growth"
+msgstr "دعم النمو التطوري"
+
+#: .\templates\index.html:77
+msgid "Nurturing Every Child's"
+msgstr "رعاية رحلة كل طفل"
+
+#: .\templates\index.html:78
+msgid "Unique Journey"
+msgstr "المميزة"
+
+#: .\templates\index.html:80
+msgid ""
+"Namaa is a comprehensive platform connecting parents and therapists to track "
+"developmental progress, manage treatment plans, and celebrate every "
+"milestone in your child's growth."
+msgstr ""
+
+#: .\templates\index.html:82
+msgid "Get Started"
+msgstr "ابدأ الآن"
+
+#: .\templates\index.html:83
+msgid "Learn More"
+msgstr "تعرف على المزيد"
+
+#: .\templates\index.html:96
+msgid "Family Centered Care"
+msgstr "رعاية متمحورة حول الأسرة"
+
+#: .\templates\index.html:97
+msgid "Connecting parents and therapists"
+msgstr "ربط أولياء الأمور والأخصائيين"
+
+#: .\templates\index.html:107
+msgid "Track developmental milestones"
+msgstr "تتبع مراحل النمو التطورية"
+
+#: .\templates\index.html:115
+msgid "Monitor treatment progress"
+msgstr "مراقبة تقدم العلاج"
+
+#: .\templates\index.html:123
+msgid "Secure communication"
+msgstr "تواصل آمن"
+
+#: .\templates\index.html:138
+msgid "Comprehensive Care Management"
+msgstr "إدارة الرعاية الشاملة"
+
+#: .\templates\index.html:139
+msgid "Everything you need to support your child's journey in one place."
+msgstr "كل ما تحتاجه لدعم رحلة طفلك في مكان واحد."
+
+#: .\templates\index.html:150 .\templates\parent\treatment-plans.html:4
+#: .\templates\parent\treatment-plans.html:15
+#: .\templates\partials\parent_sidebar.html:47
+#: .\templates\partials\therapist_sidebar.html:50
+#: .\templates\therapist\treatment-plans.html:15
+msgid "Treatment Plans"
+msgstr "خطط العلاج"
+
+#: .\templates\index.html:151
+msgid ""
+"Detailed treatment plans with goals, therapies, and progress tracking "
+"tailored to each child."
+msgstr ""
+
+#: .\templates\index.html:161
+msgid "Session Management"
+msgstr "إدارة الجلسات"
+
+#: .\templates\index.html:162
+msgid ""
+"Schedule, track, and document therapy sessions with detailed notes and "
+"observations."
+msgstr ""
+
+#: .\templates\index.html:172
+#: .\templates\parent\developmental-assessment.html:15
+msgid "Developmental Assessment"
+msgstr "التقييم التطوري"
+
+#: .\templates\index.html:173
+msgid ""
+"Comprehensive questionnaires to track developmental milestones and identify "
+"areas for support."
+msgstr ""
+
+#: .\templates\index.html:183
+msgid "Family Collaboration"
+msgstr "التعاون الأسري"
+
+#: .\templates\index.html:184
+msgid ""
+"Connect parents and therapists for seamless communication and coordinated "
+"care."
+msgstr ""
+
+#: .\templates\index.html:194 .\templates\parent\progress_tracking.html:4
+#: .\templates\parent\progress_tracking.html:18
+#, fuzzy
+#| msgid "Progress"
+msgid "Progress Tracking"
+msgstr "التقدم"
+
+#: .\templates\index.html:195
+msgid ""
+"Visual progress reports and analytics to celebrate achievements and identify "
+"growth areas."
+msgstr ""
+
+#: .\templates\index.html:205
+msgid "Secure & Private"
+msgstr "آمن وخاص"
+
+#: .\templates\index.html:206
+msgid ""
+"Your family's data is protected with industry-standard security and privacy "
+"measures."
+msgstr ""
+
+#: .\templates\index.html:221
+msgid "Families Supported"
+msgstr "عائلات تم دعمها"
+
+#: .\templates\index.html:225
+msgid "Licensed Therapists"
+msgstr "أخصائيون مرخصون"
+
+#: .\templates\index.html:229 .\templates\parent\dashboard.html:103
+msgid "Sessions Completed"
+msgstr "الجلسات المكتملة"
+
+#: .\templates\index.html:233
+msgid "Satisfaction Rate"
+msgstr "معدل الرضا"
+
+#: .\templates\index.html:240
+msgid "About Namaa"
+msgstr "عن نماء"
+
+#: .\templates\index.html:241
+msgid "Namaa, meaning \\"
+msgstr ""
+
+#: .\templates\index.html:242
+msgid ""
+"We believe that when parents and therapists work together with the right "
+"tools, every child can reach their full potential. Our platform bridges the "
+"gap between clinical care and home life, ensuring consistent support across "
+"all environments."
+msgstr ""
+
+#: .\templates\index.html:249
+msgid "Trusted by families across Jordan"
+msgstr "موثوق به من قبل العائلات في جميع أنحاء الأردن"
+
+#: .\templates\index.html:259
+msgid "Ready to Start Your Journey?"
+msgstr "جاهز لبدء رحلتك؟"
+
+#: .\templates\index.html:260
+msgid "Join hundreds of families who trust Namaa for their child's care."
+msgstr "انضم إلى مئات العائلات التي تثق في نماء لرعاية أطفالهم."
+
+#: .\templates\index.html:263
+msgid "Therapist Login"
+msgstr "تسجيل دخول الأخصائي"
+
+#: .\templates\index.html:272
+msgid "Get in Touch"
+msgstr "تواصل معنا"
+
+#: .\templates\index.html:273
+msgid ""
+"Have questions about Namaa? We're here to help you get started on your "
+"child's journey."
+msgstr ""
+
+#: .\templates\index.html:283 .\templates\index.html:322
+#: .\templates\parent\profile.html:80 .\templates\therapist\profile.html:69
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: .\templates\index.html:295
+msgid "Phone"
+msgstr "الهاتف"
+
+#: .\templates\index.html:308
+msgid "Location"
+msgstr "الموقع"
+
+#: .\templates\index.html:309
+msgid "Amman, Jordan"
+msgstr "عمان، الأردن"
+
+#: .\templates\index.html:318
+msgid "Name"
+msgstr "الاسم"
+
+#: .\templates\index.html:319
+msgid "Your name"
+msgstr "اسمك"
+
+#: .\templates\index.html:326
+msgid "Message"
+msgstr "الرسالة"
+
+#: .\templates\index.html:327
+msgid "How can we help?"
+msgstr "كيف يمكننا مساعدتك؟"
+
+#: .\templates\index.html:329
+msgid "Send Message"
+msgstr "إرسال الرسالة"
+
+#: .\templates\index.html:349
+msgid "Supporting every child's journey."
+msgstr "دعم رحلة كل طفل."
+
+#: .\templates\index.html:353
+msgid "Platform"
+msgstr "المنصة"
+
+#: .\templates\index.html:359
+msgid "For Parents"
+msgstr "لأولياء الأمور"
+
+#: .\templates\index.html:362
+msgid "For Therapists"
+msgstr "للأخصائيين"
+
+#: .\templates\index.html:365
+msgid "Pricing"
+msgstr "الأسعار"
+
+#: .\templates\index.html:371
+msgid "Resources"
+msgstr "المصادر"
+
+#: .\templates\index.html:374
+msgid "Help Center"
+msgstr "مركز المساعدة"
+
+#: .\templates\index.html:377
+msgid "Blog"
+msgstr "المدونة"
+
+#: .\templates\index.html:380
+msgid "Community"
+msgstr "المجتمع"
+
+#: .\templates\index.html:389
+msgid "Legal"
+msgstr "القانونية"
+
+#: .\templates\index.html:398
+msgid "Cookie Policy"
+msgstr "سياسة ملفات الارتباط"
+
+#: .\templates\index.html:405
+msgid "All rights reserved."
+msgstr "جميع الحقوق محفوظة."
+
+#: .\templates\parent\children.html:15 .\templates\parent\dashboard.html:114
+#: .\templates\partials\parent_sidebar.html:33
+msgid "My Children"
+msgstr "أطفالي"
+
+#: .\templates\parent\children.html:16
+msgid "View your linked children and their progress"
+msgstr "عرض ملفات أطفالك ومتابعة تقدمهم"
+
+#: .\templates\parent\children.html:24 .\templates\parent\dashboard.html:26
+#: .\templates\parent\developmental-assessment.html:24
+#: .\templates\parent\profile.html:24 .\templates\parent\sessions.html:24
+#: .\templates\parent\treatment-plans.html:24
+msgid "Loading..."
+msgstr "جاري التحميل..."
+
+#: .\templates\parent\children.html:29 .\templates\parent\children.html:31
+#: .\templates\parent\dashboard.html:31 .\templates\parent\dashboard.html:33
+#: .\templates\parent\developmental-assessment.html:29
+#: .\templates\parent\developmental-assessment.html:31
+#: .\templates\parent\profile.html:29 .\templates\parent\profile.html:31
+#: .\templates\parent\profile.html:54
+#: .\templates\parent\progress_tracking.html:28
+#: .\templates\parent\sessions.html:29 .\templates\parent\sessions.html:31
+#: .\templates\parent\treatment-plan-detail.html:47
+#: .\templates\parent\treatment-plans.html:29
+#: .\templates\parent\treatment-plans.html:31
+#: .\templates\therapist\children.html:108
+msgid "Parent Code"
+msgstr "رمز ولي الأمر"
+
+#: .\templates\parent\children.html:55
+#, fuzzy
+#| msgid "Saved Drawing"
+msgid "Recent Drawing"
+msgstr "الرسم المحفوظ"
+
+#: .\templates\parent\children.html:66 .\templates\therapist\children.html:41
+msgid "Born"
+msgstr "تاريخ الميلاد"
+
+#: .\templates\parent\children.html:72 .\templates\parent\dashboard.html:89
+#: .\templates\therapist\dashboard.html:72
+msgid "Active Plans"
+msgstr "الخطط النشطة"
+
+#: .\templates\parent\children.html:76
+#: .\templates\therapist\treatment-plan-detail.html:64
+msgid "Total Sessions"
+msgstr "إجمالي الجلسات"
+
+#: .\templates\parent\children.html:86
+msgid "View Treatment Plan"
+msgstr "عرض خطة العلاج"
+
+#: .\templates\parent\children.html:100
+msgid "No Treatment Plan"
+msgstr "لا توجد خطة علاج"
+
+#: .\templates\parent\children.html:110
+msgid "Open Drawing Canvas"
+msgstr "فتح لوحة الرسم"
+
+#: .\templates\parent\children.html:128
+#, fuzzy
+#| msgid "No children assigned to you yet."
+msgid "No children linked yet"
+msgstr "لا يوجد أطفال معينون لك بعد."
+
+#: .\templates\parent\children.html:129
+msgid "Share your Parent Code with a clinic to link your children."
+msgstr ""
+
+#: .\templates\parent\dashboard.html:4
+msgid "Parent Dashboard"
+msgstr "لوحة تحكم ولي الأمر"
+
+#: .\templates\parent\dashboard.html:17
+msgid "Welcome back!"
+msgstr "مرحباً بعودتك!"
+
+#: .\templates\parent\dashboard.html:18
+msgid "Here's an overview of your family's progress"
+msgstr "إليك نظرة عامة على تقدم عائلتك"
+
+#: .\templates\parent\dashboard.html:61
+#: .\templates\parent\drawing_results.html:551
+#: .\templates\partials\therapist_sidebar.html:38
+msgid "Children"
+msgstr "الأطفال"
+
+#: .\templates\parent\dashboard.html:75 .\templates\parent\dashboard.html:141
+#: .\templates\therapist\dashboard.html:60
+#: .\templates\therapist\dashboard.html:122
+msgid "Upcoming Sessions"
+msgstr "الجلسات القادمة"
+
+#: .\templates\parent\dashboard.html:115 .\templates\parent\dashboard.html:142
+#: .\templates\therapist\dashboard.html:95
+#: .\templates\therapist\dashboard.html:123
+msgid "View All"
+msgstr "عرض الكل"
+
+#: .\templates\parent\dashboard.html:127
+#: .\templates\therapist\dashboard.html:105
+msgid "Born:"
+msgstr "تاريخ الميلاد:"
+
+#: .\templates\parent\dashboard.html:132
+msgid "No children found."
+msgstr "لم يتم العثور على أطفال."
+
+#: .\templates\parent\dashboard.html:155
+#: .\templates\therapist\dashboard.html:134
+#, python-format
+msgid "%(child_name)s's Session"
+msgstr "جلسة %(child_name)s"
+
+#: .\templates\parent\dashboard.html:159
+msgid "Upcoming"
+msgstr "قادمة"
+
+#: .\templates\parent\dashboard.html:162
+#: .\templates\therapist\dashboard.html:143
+msgid "No upcoming sessions."
+msgstr "لا توجد جلسات قادمة."
+
+#: .\templates\parent\dashboard.html:170
+#: .\templates\therapist\dashboard.html:152
+msgid "Quick Actions"
+msgstr "إجراءات سريعة"
+
+#: .\templates\parent\dashboard.html:178
+msgid "Complete Assessment"
+msgstr "إكمال التقييم"
+
+#: .\templates\parent\dashboard.html:186
+msgid "View Treatment Plans"
+msgstr "عرض خطط العلاج"
+
+#: .\templates\parent\dashboard.html:194
+msgid "Session Schedule"
+msgstr "جدول الجلسات"
+
+#: .\templates\parent\dashboard.html:202
+msgid "Update Profile"
+msgstr "تحديث الملف الشخصي"
+
+#: .\templates\parent\developmental-assessment.html:16
+msgid "Monitor and record your child's developmental progress"
+msgstr "مراقبة وتسجيل التقدم التطوري لطفلك"
+
+#: .\templates\parent\developmental-assessment.html:49
+msgid "Select a Child"
+msgstr "اختر طفلاً"
+
+#: .\templates\parent\developmental-assessment.html:50
+msgid "Choose the child you wish to complete the assessment for."
+msgstr "اختر الطفل الذي ترغب في إكمال التقييم له."
+
+#: .\templates\parent\developmental-assessment.html:56
+msgid "--- Select Child ---"
+msgstr "--- اختر الطفل ---"
+
+#: .\templates\parent\developmental-assessment.html:85
+#: .\templates\parent\sessions.html:61 .\templates\parent\sessions.html:73
+#: .\templates\therapist\sessions.html:51
+#: .\templates\therapist\sessions.html:70
+#: .\templates\therapist\treatment-plans.html:57
+#: .\templates\therapist\treatment-plans.html:76
+msgid "Completed"
+msgstr "مكتملة"
+
+#: .\templates\parent\developmental-assessment.html:87
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#: .\templates\parent\developmental-assessment.html:91
+#, python-format
+msgid ""
+"This assessment for <span class=\"font-bold underline\">%(child_name)s</"
+"span> helps our clinical team tailor the perfect intervention strategy. "
+"Please provide detailed and honest reflections on your child's daily "
+"interactions and responses."
+msgstr ""
+
+#: .\templates\parent\developmental-assessment.html:102
+msgid ""
+"You have already completed this assessment. Changes are no longer permitted."
+msgstr ""
+
+#: .\templates\parent\developmental-assessment.html:122
+msgid "Share your observations here..."
+msgstr "شارك ملاحظاتك هنا..."
+
+#: .\templates\parent\developmental-assessment.html:135
+msgid "Make sure all questions are answered before submitting."
+msgstr "تأكد من الإجابة على جميع الأسئلة قبل التسليم."
+
+#: .\templates\parent\developmental-assessment.html:138
+msgid "Submit Assessment"
+msgstr "إرسال التقييم"
+
+#: .\templates\parent\developmental-assessment.html:153
+msgid "No Assessment Found"
+msgstr "لم يتم العثور على تقييم"
+
+#: .\templates\parent\developmental-assessment.html:154
+msgid "There are no assessments currently assigned to this child."
+msgstr "لا يوجد تقييمات معينة حالياً لهذا الطفل."
+
+#: .\templates\parent\developmental-assessment.html:165
+msgid "Ready to Start?"
+msgstr "جاهز للبدء؟"
+
+#: .\templates\parent\developmental-assessment.html:166
+msgid ""
+"Please select one of your children from the dropdown above to begin or view "
+"their developmental assessment."
+msgstr ""
+
+#: .\templates\parent\drawing_results.html:3
+msgid "Drawing Results"
+msgstr "تسليم النتائج"
+
+#: .\templates\parent\drawing_results.html:544
+#, python-format
+msgid "%(name)s's Drawing Analysis"
+msgstr "تحليل رسم %(name)s"
+
+#: .\templates\parent\drawing_results.html:553
+msgid "Refresh analysis with latest engine"
+msgstr ""
+
+#: .\templates\parent\drawing_results.html:555
+msgid "Re-analyze"
+msgstr "إعادة التحليل"
+
+#: .\templates\parent\drawing_results.html:558
+msgid "Draw Again"
+msgstr "ارسم مرة أخرى"
+
+#: .\templates\parent\drawing_results.html:568
+msgid "Analysis data may be outdated"
+msgstr ""
+
+#: .\templates\parent\drawing_results.html:569
+msgid ""
+"This drawing was analyzed with an older version of our engine. Click 'Re-"
+"analyze' above for more detailed metrics."
+msgstr ""
+
+#: .\templates\parent\drawing_results.html:589
+msgid "Detected Emotional State"
+msgstr "الحالة العاطفية المكتشفة"
+
+#: .\templates\parent\drawing_results.html:591
+msgid "Calm"
+msgstr "هادئ"
+
+#: .\templates\parent\drawing_results.html:592
+msgid "Happy"
+msgstr "سعيد"
+
+#: .\templates\parent\drawing_results.html:593
+msgid "Energetic"
+msgstr "نشيط"
+
+#: .\templates\parent\drawing_results.html:594
+msgid "Overwhelmed"
+msgstr "مرهق"
+
+#: .\templates\parent\drawing_results.html:595
+msgid "Anxious"
+msgstr "قلق"
+
+#: .\templates\parent\drawing_results.html:596
+msgid "Withdrawn"
+msgstr "منطوٍ"
+
+#: .\templates\parent\drawing_results.html:608
+msgid "Saved Drawing"
+msgstr "الرسم المحفوظ"
+
+#: .\templates\parent\drawing_results.html:623
+msgid "Analysis Unavailable"
+msgstr "التحليل غير متاح"
+
+#: .\templates\parent\drawing_results.html:624
+msgid ""
+"The emotional analysis could not be completed for this drawing. Please try "
+"saving a new drawing."
+msgstr ""
+
+# Profile Page
+#: .\templates\parent\profile.html:4 .\templates\parent\profile.html:15
+#: .\templates\partials\parent_sidebar.html:26
+#: .\templates\partials\therapist_sidebar.html:32
+#: .\templates\therapist\profile.html:14
+msgid "My Profile"
+msgstr "ملفي الشخصي"
+
+#: .\templates\parent\profile.html:16
+msgid "Manage your personal information"
+msgstr "إدارة معلوماتك المهنية"
+
+#: .\templates\parent\profile.html:52
+msgid "Parent Account"
+msgstr "حساب ولي الأمر"
+
+#: .\templates\parent\profile.html:56
+msgid ""
+"Share this code with your therapist to securely connect your child's "
+"developmental records."
+msgstr "مراقبة وتسجيل التقدم التطوري لطفلك"
+
+#: .\templates\parent\profile.html:63
+msgid "Personal Information"
+msgstr "المعلومات الشخصية"
+
+#: .\templates\parent\profile.html:70 .\templates\therapist\profile.html:59
+msgid "Enter your first name"
+msgstr "أدخل اسمك الأول"
+
+#: .\templates\parent\profile.html:75 .\templates\therapist\profile.html:64
+msgid "Enter your last name"
+msgstr "أدخل اسم العائلة"
+
+#: .\templates\parent\profile.html:81
+msgid "your@email.com"
+msgstr "your@email.com"
+
+#: .\templates\parent\profile.html:87
+msgid "e.g. +966 5X XXX XXXX"
+msgstr "مثال: +966 5X XXX XXXX"
+
+#: .\templates\parent\profile.html:88
+msgid "Invalid phone number format"
+msgstr "تنسيق رقم الهاتف غير صالح"
+
+#: .\templates\parent\profile.html:94
+msgid "Enter your full residential address"
+msgstr "أدخل عنوان سكنك الكامل"
+
+#: .\templates\parent\profile.html:98 .\templates\therapist\profile.html:85
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+#: .\templates\parent\progress_tracking.html:43
+msgid "No Indicators Yet"
+msgstr "لا توجد مؤشرات بعد"
+
+#: .\templates\parent\progress_tracking.html:44
+msgid ""
+"The therapist hasn't added any indicators to track yet. They will appear "
+"here after a session is submitted."
+msgstr ""
+
+#: .\templates\parent\progress_tracking.html:46
+msgid "Back to Treatment Plan"
+msgstr "العودة إلى خطة العلاج"
+
+#: .\templates\parent\progress_tracking.html:77
+msgid "Today"
+msgstr ""
+
+#: .\templates\parent\progress_tracking.html:101
+msgid "Today's Assessment"
+msgstr "التقييم"
+
+#: .\templates\parent\progress_tracking.html:110
+msgid "Slide to reflect today's progress for this indicator."
+msgstr ""
+
+#: .\templates\parent\progress_tracking.html:115
+msgid "Your Note (optional)"
+msgstr "ملاحظتك (اختياري)"
+
+#: .\templates\parent\progress_tracking.html:118
+msgid "Add any observations or notes..."
+msgstr "أضف أي ملاحظات أو مشاهدات..."
+
+#: .\templates\parent\progress_tracking.html:126
+msgid "Submit Progress"
+msgstr "تسليم التقدم"
+
+#: .\templates\parent\progress_tracking.html:131
+msgid "Submitted for Today"
+msgstr "تم التسليم لهذا اليوم"
+
+#: .\templates\parent\progress_tracking.html:141
+msgid "Past Records"
+msgstr ""
+
+# Parent Sessions
+#: .\templates\parent\sessions.html:4 .\templates\parent\sessions.html:15
+#: .\templates\partials\parent_sidebar.html:40
+#: .\templates\partials\therapist_sidebar.html:44
+#: .\templates\therapist\treatment-plan-detail.html:81
+#: .\templates\therapist\treatment-plans.html:111
+msgid "Sessions"
+msgstr "الجلسات"
+
+#: .\templates\parent\sessions.html:16
+#, fuzzy
+#| msgid "View treatment plans and goals for your children"
+msgid "View all therapy sessions for your children"
+msgstr "عرض خطط العلاج والأهداف لأطفالك"
+
+#: .\templates\parent\sessions.html:48
+#: .\templates\therapist\submit_session.html:34
+msgid "Child"
+msgstr "الطفل"
+
+#: .\templates\parent\sessions.html:50
+msgid "All Children"
+msgstr "جميع الأطفال"
+
+#: .\templates\parent\sessions.html:58 .\templates\therapist\sessions.html:47
+#: .\templates\therapist\submit_session.html:74
+#: .\templates\therapist\treatment-plan-detail.html:188
+#: .\templates\therapist\treatment-plans.html:69
+msgid "Status"
+msgstr "الحالة"
+
+#: .\templates\parent\sessions.html:60 .\templates\therapist\sessions.html:49
+#: .\templates\therapist\treatment-plans.html:55
+msgid "All Statuses"
+msgstr "كل الحالات"
+
+#: .\templates\parent\sessions.html:62 .\templates\parent\sessions.html:77
+#: .\templates\therapist\dashboard.html:140
+#: .\templates\therapist\sessions.html:50
+#: .\templates\therapist\sessions.html:66
+msgid "Scheduled"
+msgstr "مجدولة"
+
+#: .\templates\parent\sessions.html:63 .\templates\parent\sessions.html:81
+#: .\templates\therapist\sessions.html:52
+#: .\templates\therapist\sessions.html:74
+msgid "Cancelled"
+msgstr "ملغاة"
+
+#: .\templates\parent\sessions.html:70 .\templates\therapist\sessions.html:63
+msgid "Legend"
+msgstr "دليل الألوان"
+
+#: .\templates\parent\sessions.html:107
+#: .\templates\parent\treatment-plan-detail.html:87
+#: .\templates\therapist\profile.html:43
+#: .\templates\therapist\submit_session.html:42
+msgid "Clinic"
+msgstr "العيادة"
+
+#: .\templates\parent\sessions.html:127 .\templates\therapist\sessions.html:135
+msgid "No sessions found"
+msgstr "لم يتم العثور على جلسات"
+
+# Treatment Plan Details & Summaries
+#: .\templates\parent\sessions.html:128
+msgid "Try adjusting your filters to find what you're looking for."
+msgstr "حاول تعديل الفلاتر للعثور على ما تبحث عنه."
+
+#: .\templates\parent\treatment-plan-detail.html:4
+msgid "Plan Details"
+msgstr "عرض تفاصيل الخطة"
+
+#: .\templates\parent\treatment-plan-detail.html:21
+#: .\templates\therapist\treatment-plan-detail.html:20
+msgid "Treatment Plan Details"
+msgstr "تفاصيل خطة العلاج"
+
+#: .\templates\parent\treatment-plan-detail.html:22
+#, python-format
+msgid "Comprehensive view for %(name)s %(last)s"
+msgstr "عرض شامل لـ %(name)s %(last)s"
+
+#: .\templates\parent\treatment-plan-detail.html:29
+msgid "View Sessions"
+msgstr "عرض الجلسات"
+
+#: .\templates\parent\treatment-plan-detail.html:35
+msgid "Track Progress"
+msgstr "تتبع التقدم"
+
+#: .\templates\parent\treatment-plan-detail.html:63
+msgid "Plan Overview"
+msgstr "نظرة عامة على الخطة"
+
+#: .\templates\parent\treatment-plan-detail.html:64
+msgid "Active Plan"
+msgstr "خطة نشطة"
+
+#: .\templates\parent\treatment-plan-detail.html:75
+#: .\templates\parent\treatment-plans.html:55
+#: .\templates\partials\therapist_sidebar.html:18
+#: .\templates\therapist\dashboard.html:34
+msgid "Therapist"
+msgstr "أخصائي"
+
+#: .\templates\parent\treatment-plan-detail.html:99
+msgid "Therapy Goals"
+msgstr "أهداف العلاج"
+
+#: .\templates\parent\treatment-plan-detail.html:110
+msgid "No specific goals have been recorded yet."
+msgstr "لم يتم تسجيل أهداف محددة بعد."
+
+#: .\templates\parent\treatment-plan-detail.html:119
+msgid "Proposed Treatments"
+msgstr "العلاجات المقترحة"
+
+#: .\templates\parent\treatment-plan-detail.html:128
+msgid "No treatments listed at this time."
+msgstr "لا توجد علاجات مدرجة في الوقت الحالي."
+
+#: .\templates\parent\treatment-plan-detail.html:138
+msgid "Diagnosis & Status"
+msgstr "التشخيص والحالة"
+
+#: .\templates\parent\treatment-plan-detail.html:149
+msgid "No diagnostic records available."
+msgstr "لا توجد سجلات تشخيصية متاحة."
+
+#: .\templates\parent\treatment-plan-detail.html:156
+msgid "Recent Progress"
+msgstr "التقدم المحرز مؤخراً"
+
+#: .\templates\parent\treatment-plan-detail.html:178
+msgid "No progress updates yet."
+msgstr "لا يوجد تحديثات للتقدم بعد."
+
+#: .\templates\parent\treatment-plan-detail.html:182
+msgid "View All Progress"
+msgstr "عرض كل التقدم"
+
+#: .\templates\parent\treatment-plans.html:16
+msgid "View treatment plans and goals for your children"
+msgstr "عرض خطط العلاج والأهداف لأطفالك"
+
+#: .\templates\parent\treatment-plans.html:54
+#, python-format
+msgid "%(name)s's Plan"
+msgstr "خطة %(name)s"
+
+#: .\templates\parent\treatment-plans.html:58
+#: .\templates\therapist\treatment-plans.html:56
+#: .\templates\therapist\treatment-plans.html:72
+msgid "Active"
+msgstr "نشط"
+
+#: .\templates\parent\treatment-plans.html:63
+msgid "Current Goals"
+msgstr "الأهداف الحالية"
+
+#: .\templates\parent\treatment-plans.html:71
+#: .\templates\therapist\treatment-plan-detail.html:129
+msgid "No goals defined yet."
+msgstr "لم يتم تحديد أهداف بعد."
+
+#: .\templates\parent\treatment-plans.html:78
+msgid "Progress"
+msgstr "التقدم"
+
+#: .\templates\parent\treatment-plans.html:79
+msgid "Indicators"
+msgstr "مؤشرات"
+
+#: .\templates\parent\treatment-plans.html:81
+msgid "View Details"
+msgstr "عرض التفاصيل"
+
+#: .\templates\parent\treatment-plans.html:92
+msgid "No treatment plans yet"
+msgstr "لا توجد خطط علاج بعد"
+
+#: .\templates\parent\treatment-plans.html:93
+msgid "When your child is assigned a treatment plan, it will appear here."
+msgstr "عندما يتم تعيين خطة علاج لطفلك، ستظهر هنا."
+
+#: .\templates\partials\parent_sidebar.html:2
+msgid "Sidebar"
+msgstr "القائمة الجانبية"
+
+#: .\templates\partials\parent_sidebar.html:13
+msgid "Main Navigation"
+msgstr "التنقل الرئيسي"
+
+#: .\templates\partials\parent_sidebar.html:54
+msgid "Assessment"
+msgstr "التقييم"
+
+#: .\templates\therapist\add_plan.html:18
+#: .\templates\therapist\treatment-plans.html:146
+msgid "Add New Treatment Plan"
+msgstr "إضافة خطة علاج جديدة"
+
+#: .\templates\therapist\children.html:15
+msgid "Children Management"
+msgstr "إدارة الأطفال"
+
+#: .\templates\therapist\children.html:16
+msgid "Add and manage children profiles"
+msgstr "إضافة وإدارة ملفات الأطفال"
+
+#: .\templates\therapist\children.html:22
+#: .\templates\therapist\dashboard.html:158
+msgid "Add Child"
+msgstr "إضافة طفل"
+
+#: .\templates\therapist\children.html:37
+#, python-format
+msgid "%(age)s old"
+msgstr "العمر %(age)s"
+
+#: .\templates\therapist\children.html:48
+#: .\templates\therapist\treatment-plan-detail.html:99
+msgid "Parent"
+msgstr "ولي الأمر"
+
+#: .\templates\therapist\children.html:54
+msgid "Parent ID"
+msgstr "معرف ولي الأمر"
+
+#: .\templates\therapist\children.html:64
+msgid "Add New Session"
+msgstr "جلسة جديدة"
+
+#: .\templates\therapist\children.html:71
+msgid "Add Plan"
+msgstr "إضافة خطة جديدة"
+
+#: .\templates\therapist\children.html:78
+msgid "No children assigned to you yet."
+msgstr "لا يوجد أطفال معينون لك بعد."
+
+#: .\templates\therapist\children.html:89
+msgid "Add New Child"
+msgstr "إضافة طفل جديد"
+
+#: .\templates\therapist\children.html:104
+#: .\templates\therapist\treatment-plan-detail.html:95
+msgid "Date of Birth"
+msgstr "تاريخ الميلاد"
+
+#: .\templates\therapist\children.html:110
+msgid "Enter the parent's unique sharing code to link this child."
+msgstr "أدخل رمز المشاركة الفريد لولي الأمر لربط هذا الطفل."
+
+#: .\templates\therapist\children.html:113
+#: .\templates\therapist\submit_session.html:99
+#: .\templates\therapist\treatment-plan-detail.html:311
+#: .\templates\therapist\treatment-plans.html:168
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: .\templates\therapist\children.html:114
+msgid "Save & Assign"
+msgstr "حفظ وتعيين"
+
+#: .\templates\therapist\dashboard.html:4
+msgid "Therapist Dashboard"
+msgstr "لوحة تحكم الأخصائي"
+
+#: .\templates\therapist\dashboard.html:28
+#, python-format
+msgid "Welcome back, Dr. %(user.first_name)s!"
+msgstr "مرحباً بعودتك، د. %(user.first_name)s!"
+
+#: .\templates\therapist\dashboard.html:29
+msgid "Here's an overview of your practice"
+msgstr "إليك نظرة عامة على ممارستك"
+
+#: .\templates\therapist\dashboard.html:48
+msgid "Total Children"
+msgstr "إجمالي الأطفال"
+
+#: .\templates\therapist\dashboard.html:84
+msgid "Completed Sessions"
+msgstr "الجلسات المكتملة"
+
+#: .\templates\therapist\dashboard.html:94
+msgid "Recent Children"
+msgstr "آخر الأطفال"
+
+#: .\templates\therapist\dashboard.html:113
+msgid "No children assigned yet."
+msgstr "لا يوجد أطفال معينون لك بعد."
+
+#: .\templates\therapist\dashboard.html:164
+msgid "New Session"
+msgstr "جلسة جديدة"
+
+#: .\templates\therapist\dashboard.html:170
+msgid "New Plan"
+msgstr "خطة جديدة"
+
+# Profile Page
+#: .\templates\therapist\dashboard.html:176
+msgid "Review Answers"
+msgstr "مراجعة الإجابات"
+
+#: .\templates\therapist\profile.html:15
+msgid "Manage your professional information"
+msgstr "إدارة معلوماتك المهنية"
+
+#: .\templates\therapist\profile.html:41
+msgid "Therapist Account"
+msgstr "حساب أخصائي"
+
+#: .\templates\therapist\profile.html:45
+#, python-format
+msgid "Assigned to %(branch)s branch."
+msgstr "معين في فرع %(branch)s."
+
+#: .\templates\therapist\profile.html:52
+msgid "Personal & Professional Information"
+msgstr "المعلومات الشخصية والمهنية"
+
+#: .\templates\therapist\profile.html:71
+msgid "Email cannot be changed."
+msgstr "لا يمكن تغيير البريد الإلكتروني."
+
+#: .\templates\therapist\profile.html:75
+msgid "Specialization"
+msgstr "التخصص"
+
+#: .\templates\therapist\profile.html:76
+msgid "e.g. Speech Therapist"
+msgstr "مثل: أخصائي تخاطب"
+
+#: .\templates\therapist\profile.html:80
+msgid "License Number"
+msgstr "رقم الترخيص"
+
+#: .\templates\therapist\profile.html:82
+msgid "License number cannot be changed. Contact admin if this is incorrect."
+msgstr ""
+
+#: .\templates\therapist\sessions.html:15
+msgid "Sessions Management"
+msgstr "إدارة الجلسات"
+
+#: .\templates\therapist\sessions.html:16
+msgid "Track and manage your therapy sessions"
+msgstr "تتبع وإدارة جلسات العلاج الخاصة بك"
+
+#: .\templates\therapist\sessions.html:36
+#: .\templates\therapist\treatment-plans.html:42
+msgid "Search Child Name"
+msgstr "البحث باسم الطفل"
+
+#: .\templates\therapist\sessions.html:38
+#: .\templates\therapist\treatment-plans.html:44
+msgid "Enter child name..."
+msgstr "أدخل اسم الطفل..."
+
+#: .\templates\therapist\sessions.html:57
+msgid "Search Sessions"
+msgstr "بحث عن الجلسات"
+
+#: .\templates\therapist\sessions.html:100
+msgid "Clinic Center"
+msgstr "المركز الطبي"
+
+#: .\templates\therapist\sessions.html:117
+msgid "Submit Results"
+msgstr "تسليم النتائج"
+
+# Treatment Plan Details & Summaries
+#: .\templates\therapist\sessions.html:136
+msgid "Try adjusting your filters or searching for a different child name."
+msgstr "حاول تعديل الفلاتر للعثور على ما تبحث عنه."
+
+#: .\templates\therapist\sessions.html:152
+msgid "Cancel Session?"
+msgstr "إلغاء الجلسة؟"
+
+#: .\templates\therapist\sessions.html:154
+msgid "Are you sure you want to cancel the session for"
+msgstr "هل أنت متأكد أنك تريد إلغاء الجلسة لـ"
+
+#: .\templates\therapist\sessions.html:154
+msgid "This action cannot be undone."
+msgstr "هذا الإجراء لا يمكن التراجع عنه."
+
+#: .\templates\therapist\sessions.html:157
+msgid "No, Keep it"
+msgstr "لا، احتفظ بها"
+
+#: .\templates\therapist\sessions.html:160
+msgid "Yes, Cancel Session"
+msgstr "نعم، ألغِ الجلسة"
+
+#: .\templates\therapist\submit_session.html:16
+msgid "Submit Session Details"
+msgstr "تسليم تفاصيل الجلسة"
+
+#: .\templates\therapist\submit_session.html:18
+#, python-format
+msgid "Review and record therapy session outcomes for %(child_name)s"
+msgstr "مراجعة وتسجيل نتائج جلسة العلاج لـ %(child_name)s"
+
+#: .\templates\therapist\submit_session.html:29
+msgid "Session Information"
+msgstr "معلومات الجلسة"
+
+#: .\templates\therapist\submit_session.html:38
+msgid "Date & Time"
+msgstr "التاريخ والوقت"
+
+#: .\templates\therapist\submit_session.html:51
+msgid "Session Notes"
+msgstr "ملاحظات الجلسة"
+
+#: .\templates\therapist\submit_session.html:52
+msgid "Document the activities and observations during the session."
+msgstr "توثيق الأنشطة والملاحظات أثناء الجلسة."
+
+#: .\templates\therapist\submit_session.html:57
+msgid "Enter detailed session notes here..."
+msgstr "أدخل ملاحظات الجلسة التفصيلية هنا..."
+
+#: .\templates\therapist\submit_session.html:64
+msgid "Update Diagnosis"
+msgstr "تحديث التشخيص"
+
+#: .\templates\therapist\submit_session.html:65
+msgid "Update the child's clinical diagnosis for this treatment plan."
+msgstr "تحديث التشخيص السريري للطفل لهذه الخطة العلاجية."
+
+#: .\templates\therapist\submit_session.html:70
+msgid "Current"
+msgstr "الأهداف الحالية"
+
+#: .\templates\therapist\submit_session.html:78
+msgid "e.g. Mild Autism..."
+msgstr "مثال: توحد خفيف..."
+
+#: .\templates\therapist\submit_session.html:81
+#: .\templates\therapist\treatment-plan-detail.html:192
+msgid "Description"
+msgstr "الوصف"
+
+#: .\templates\therapist\submit_session.html:84
+msgid "Diagnosis notes..."
+msgstr "ملاحظات التشخيص..."
+
+#: .\templates\therapist\submit_session.html:92
+msgid "To add Goals, Treatment Methods, or Progress Indicators, go to the"
+msgstr "لإضافة أهداف، طرق علاج، أو مؤشرات تقدم، اذهب إلى صفحة"
+
+#: .\templates\therapist\submit_session.html:92
+msgid "Treatment Plan"
+msgstr "خطة العلاج"
+
+#: .\templates\therapist\submit_session.html:92
+msgid "page."
+msgstr " "
+
+#: .\templates\therapist\submit_session.html:104
+msgid "Submit & Complete Session"
+msgstr "إرسال وإكمال الجلسة"
+
+#: .\templates\therapist\treatment-plan-detail.html:21
+#, python-format
+msgid "Managing care for %(child_name)s %(child_last)s"
+msgstr ""
+
+#: .\templates\therapist\treatment-plan-detail.html:29
+msgid "Mark as Completed"
+msgstr "تمت المتابعة"
+
+#: .\templates\therapist\treatment-plan-detail.html:43
+#: .\templates\therapist\treatment-plans.html:53
+msgid "Plan Status"
+msgstr "حالة الخطة"
+
+#: .\templates\therapist\treatment-plan-detail.html:54
+msgid "Current Status"
+msgstr "الحالة الحالية"
+
+#: .\templates\therapist\treatment-plan-detail.html:60
+msgid "Started on"
+msgstr "بدأت في"
+
+#: .\templates\therapist\treatment-plan-detail.html:68
+msgid "Child Age"
+msgstr "عمر الطفل"
+
+#: .\templates\therapist\treatment-plan-detail.html:69
+msgid "years"
+msgstr ""
+
+#: .\templates\therapist\treatment-plan-detail.html:77
+#: .\templates\therapist\treatment-plans.html:115
+msgid "Goals"
+msgstr "الأهداف"
+
+#: .\templates\therapist\treatment-plan-detail.html:88
+msgid "Patient Information"
+msgstr "معلومات المريض"
+
+#: .\templates\therapist\treatment-plan-detail.html:91
+msgid "Full Name"
+msgstr "الاسم الكامل"
+
+#: .\templates\therapist\treatment-plan-detail.html:114
+msgid "Therapeutic Goals"
+msgstr "الأهداف العلاجية"
+
+#: .\templates\therapist\treatment-plan-detail.html:135
+msgid "New goal..."
+msgstr "هدف جديد..."
+
+#: .\templates\therapist\treatment-plan-detail.html:136
+#: .\templates\therapist\treatment-plan-detail.html:171
+msgid "Add"
+msgstr "إضافة"
+
+#: .\templates\therapist\treatment-plan-detail.html:144
+msgid "Treatment Methods"
+msgstr "طرق العلاج"
+
+#: .\templates\therapist\treatment-plan-detail.html:162
+msgid "No treatments recorded."
+msgstr "لا توجد علاجات مسجلة."
+
+#: .\templates\therapist\treatment-plan-detail.html:168
+msgid "Type (e.g. Speech)"
+msgstr "النوع (مثل: التخاطب)"
+
+#: .\templates\therapist\treatment-plan-detail.html:170
+msgid "Description..."
+msgstr "الوصف..."
+
+#: .\templates\therapist\treatment-plan-detail.html:181
+msgid "Clinical Diagnosis"
+msgstr "التشخيص السريري"
+
+#: .\templates\therapist\treatment-plan-detail.html:189
+#, fuzzy
+#| msgid "e.g. Mild Autism..."
+msgid "e.g. Mild Autism"
+msgstr "مثال: توحد خفيف..."
+
+#: .\templates\therapist\treatment-plan-detail.html:193
+msgid "Clinical observations..."
+msgstr "الملاحظات السريرية..."
+
+#: .\templates\therapist\treatment-plan-detail.html:195
+msgid "Save Diagnosis"
+msgstr "حفظ التشخيص"
+
+#: .\templates\therapist\treatment-plan-detail.html:203
+msgid "Session History"
+msgstr "تاريخ الجلسات"
+
+#: .\templates\therapist\treatment-plan-detail.html:214
+msgid "Session"
+msgstr "الجلسة"
+
+#: .\templates\therapist\treatment-plan-detail.html:220
+msgid "Notes"
+msgstr "ملاحظات"
+
+#: .\templates\therapist\treatment-plan-detail.html:233
+msgid "No sessions found for this plan."
+msgstr "لم يتم العثور على جلسات لهذه الخطة."
+
+#: .\templates\therapist\treatment-plan-detail.html:243
+msgid "Progress Indicators"
+msgstr "مؤشرات التقدم"
+
+#: .\templates\therapist\treatment-plan-detail.html:254
+msgid "entries"
+msgstr "مدخلات"
+
+#: .\templates\therapist\treatment-plan-detail.html:273
+msgid "No entries yet."
+msgstr "لا توجد مدخلات بعد."
+
+#: .\templates\therapist\treatment-plan-detail.html:278
+msgid "No indicators linked to this plan yet."
+msgstr "لا توجد مؤشرات مرتبطة بهذه الخطة بعد."
+
+#: .\templates\therapist\treatment-plan-detail.html:285
+msgid "Select Indicator"
+msgstr "اختر المؤشر"
+
+#: .\templates\therapist\treatment-plan-detail.html:290
+msgid "Note for parent (optional)"
+msgstr "ملاحظة لولي الأمر (اختياري)"
+
+#: .\templates\therapist\treatment-plan-detail.html:291
+msgid "Link"
+msgstr "ربط"
+
+#: .\templates\therapist\treatment-plan-detail.html:306
+msgid "Complete Treatment Plan?"
+msgstr "هل تريد إكمال خطة العلاج؟"
+
+#: .\templates\therapist\treatment-plan-detail.html:307
+#, python-format
+msgid ""
+"You are about to mark the treatment plan for <span class=\"font-bold text-"
+"gray-800\">%(child_name)s</span> as completed. This will move the plan to "
+"records."
+msgstr ""
+"أنت على وشك تحديد خطة العلاج لـ <span class=\"font-bold text-"
+"gray-800\">%(child_name)s</span> كمكتملة. سيؤدي هذا إلى نقل الخطة إلى "
+"السجلات."
+
+#: .\templates\therapist\treatment-plan-detail.html:314
+msgid "Yes, Complete"
+msgstr "نعم، أكمل"
+
+#: .\templates\therapist\treatment-plans.html:16
+msgid "Overview of all active and completed treatment plans"
+msgstr "نظرة عامة على جميع خطط العلاج النشطة والمكتملة"
+
+#: .\templates\therapist\treatment-plans.html:20
+msgid "Add New Plan"
+msgstr "إضافة خطة جديدة"
+
+#: .\templates\therapist\treatment-plans.html:58
+#: .\templates\therapist\treatment-plans.html:80
+msgid "On Hold"
+msgstr "قيد الانتظار"
+
+#: .\templates\therapist\treatment-plans.html:63
+msgid "Filter Plans"
+msgstr "تصفية الخطط"
+
+#: .\templates\therapist\treatment-plans.html:106
+msgid "Started"
+msgstr "بدأ في"
+
+#: .\templates\therapist\treatment-plans.html:123
+msgid "View Plan Details"
+msgstr "عرض تفاصيل الخطة"
+
+#: .\templates\therapist\treatment-plans.html:134
+msgid "No treatment plans found"
+msgstr "لا توجد خطط علاج بعد"
+
+# Treatment Plan Details & Summaries
+#: .\templates\therapist\treatment-plans.html:135
+msgid "Try adjusting your filters or search criteria."
+msgstr "حاول تعديل الفلاتر للعثور على ما تبحث عنه."
+
+#: .\templates\therapist\treatment-plans.html:156
+msgid "Select Child"
+msgstr "اختر الطفل"
+
+#: .\templates\therapist\treatment-plans.html:158
+msgid "Choose a child..."
+msgstr "اختر طفلاً..."
+
+#: .\templates\therapist\treatment-plans.html:163
+msgid ""
+"Only children already assigned to you will appear here. To add a new child, "
+"use the"
+msgstr "سيظهر هنا فقط الأطفال المعينون لك بالفعل. لإضافة طفل جديد، استخدم"
+
+#: .\templates\therapist\treatment-plans.html:163
+msgid "Children page"
+msgstr "صفحة الأطفال"
+
+#: .\templates\therapist\treatment-plans.html:171
+msgid "Create Plan"
+msgstr "إنشاء الخطة"
+
+msgid "Session Goals"
+msgstr "أهداف الجلسة"
+
+msgid "Define targets for this plan."
+msgstr "حدد الأهداف لهذه الخطة."
+
+msgid "Add Goal"
+msgstr "إضافة هدف"
+
+msgid "Enter goal description..."
+msgstr "أدخل وصف الهدف..."
+
+msgid "Diagnostic observations."
+msgstr "الملاحظات التشخيصية."
+
+msgid "Specify treatment types and modifications."
+msgstr "حدد أنواع العلاج والتعديلات."
+
+msgid "Add Method"
+msgstr "إضافة طريقة"
+
+msgid "Type"
+msgstr "النوع"
+
+msgid "Behavioral, Speech, etc."
+msgstr "سلوكي، نطق، إلخ."
+
+msgid "Approach Description"
+msgstr "وصف النهج"
+
+msgid "Detail the approach used..."
+msgstr "فصل النهج المستخدم..."
+
+msgid "Add Indicator"
+msgstr "إضافة مؤشر"
+
+msgid "Already Linked This Session"
+msgstr "مرتبط بالفعل بهذه الجلسة"
+
+msgid "Indicator"
+msgstr "المؤشر"
+
+msgid "Description for Parent"
+msgstr "الوصف لولي الأمر"
+
+msgid "What should the parent observe?"
+msgstr "ما الذي يجب على ولي الأمر ملاحظته؟"
+
+msgid "No notes provided"
+msgstr "لا توجد ملاحظات"
+
+msgid "-- Select Indicator --"
+msgstr "-- اختر المؤشر --"
