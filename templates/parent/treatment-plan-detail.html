@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% load static i18n l10n %}
+
+{% block title %}{% trans "Plan Details" %} - {{ plan.child.first_name }} - Namaa{% endblock %}
+
+{% block content %}
+<div class="flex">
+    <!-- Sidebar -->
+    {% include 'partials/parent_sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="ms-64 flex-1 p-8">
+        <header class="mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'core:treatment_plans' %}" class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-gray-400 hover:text-sage-600 transition-colors">
+                    <svg class="w-6 h-6 rtl:scale-x-[-1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{% trans "Treatment Plan Details" %}</h1>
+                    <p class="text-gray-600">{% blocktrans with name=plan.child.first_name last=plan.child.last_name %}Comprehensive view for {{ name }} {{ last }}{% endblocktrans %}</p>
+                </div>
+                <div class="flex items-center gap-2 ms-4">
+                    <a href="{% url 'core:sessions' %}?child={{ plan.child.id }}" class="bg-sage-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-sage-600 transition-colors text-sm font-semibold shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 00-2 2z"></path>
+                        </svg>
+                        {% trans "View Sessions" %}
+                    </a>
+                    <a href="{% url 'core:parent_progress' plan.id %}" class="bg-indigo-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-indigo-600 transition-colors text-sm font-semibold shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        {% trans "Track Progress" %}
+                    </a>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-end">
+                    <p class="font-medium text-gray-800">
+                        {% if request.user.is_authenticated %}
+                            {{ request.user.first_name }} {{ request.user.last_name }}
+                        {% endif %}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+                    </p>
+                </div>
+                <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                    {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Overview & Goals -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Overview Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-sage-500 to-sage-600 p-6 text-white">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold">{% trans "Plan Overview" %}</h2>
+                            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold">{% trans "Active Plan" %}</span>
+                        </div>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex gap-4 items-center">
+                            <div class="w-12 h-12 bg-sage-50 rounded-xl flex items-center justify-center text-sage-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-start">
+                                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">{% trans "Therapist" %}</p>
+                                <p class="font-bold text-gray-800">{{ plan.therapist.user.get_full_name }}</p>
+                                <p class="text-sm text-gray-500">{{ plan.therapist.specialization }}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-center">
+                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <div class="text-start">
+                                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">{% trans "Clinic" %}</p>
+                                <p class="font-bold text-gray-800">{{ plan.therapist.clinic.name }}</p>
+                                <p class="text-sm text-gray-500">{{ plan.therapist.clinic.location }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals Section -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <span class="w-2 h-8 bg-sage-500 rounded-full inline-block"></span>
+                        {% trans "Therapy Goals" %}
+                    </h3>
+                    <div class="space-y-4">
+                        {% for goal in plan.goals.all %}
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex items-start gap-4">
+                                <div class="w-8 h-8 bg-white shadow-sm rounded-lg flex items-center justify-center text-sage-600 font-bold shrink-0">
+                                    {{ forloop.counter }}
+                                </div>
+                                <p class="text-gray-700 leading-relaxed text-start">{{ goal.target_description }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500 italic">{% trans "No specific goals have been recorded yet." %}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Treatments Section -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <span class="w-2 h-8 bg-blue-500 rounded-full inline-block"></span>
+                        {% trans "Proposed Treatments" %}
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for treatment in plan.treatments.all %}
+                            <div class="p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all text-start">
+                                <h4 class="font-bold text-blue-800 mb-1">{{ treatment.type }}</h4>
+                                <p class="text-gray-600 text-sm">{{ treatment.description }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500 italic col-span-full">{% trans "No treatments listed at this time." %}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Diagnoses & Progress -->
+            <div class="space-y-8">
+                <!-- Diagnosis Status -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">{% trans "Diagnosis & Status" %}</h3>
+                    <div class="space-y-4">
+                        {% for diagnosis in plan.diagnoses.all %}
+                            <div class="p-4 bg-amber-50 rounded-xl border border-amber-100 text-start">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-amber-600 uppercase">{{ diagnosis.status }}</span>
+                                    <span class="text-xs text-amber-500">{{ diagnosis.created_at|date:"M d, Y" }}</span>
+                                </div>
+                                <p class="text-gray-700 text-sm normal-case">{{ diagnosis.description }}</p>
+                            </div>
+                        {% empty %}
+                            <p class="text-gray-500 text-sm">{% trans "No diagnostic records available." %}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Progress Timeline -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-start">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6">{% trans "Recent Progress" %}</h3>
+                    <div class="relative border-s-2 border-sage-100 ms-3 space-y-8">
+                        {% for tpi in plan.plan_indicators.all %}
+                            {% with latest=tpi.progress_records.all|dictsortreversed:"date"|first %}
+                            {% if latest %}
+                            <div class="relative ps-8">
+                                <div class="absolute -start-[9px] top-0 w-4 h-4 rounded-full bg-sage-500 border-4 border-white"></div>
+                                <div class="text-xs text-gray-400 font-bold mb-1 uppercase tracking-tighter">{{ latest.date|date:"F d, Y" }}</div>
+                                <div class="font-bold text-gray-800 text-sm mb-1 text-start">{{ tpi.indicator.metric_name }}</div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-sage-500" style="width: {{ latest.indicator_value|unlocalize|floatformat:2 }}%"></div>
+                                    </div>
+                                    <span class="text-xs font-bold text-sage-600">{{ latest.indicator_value|floatformat:2 }}%</span>
+                                </div>
+                                {% if tpi.description %}
+                                <p class="text-gray-600 text-xs leading-relaxed italic line-clamp-2">"{{ tpi.description }}"</p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+                        {% empty %}
+                            <div class="ps-8 text-gray-400 text-sm italic">{% trans "No progress updates yet." %}</div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'core:parent_progress' plan.id %}" class="w-full mt-6 py-2 text-sm font-bold text-sage-600 border border-sage-100 rounded-lg hover:bg-sage-50 transition-colors inline-block text-center">
+                        {% trans "View All Progress" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

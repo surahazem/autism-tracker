@@ -1,0 +1,671 @@
+{% extends 'base.html' %}
+{% load static i18n l10n %}
+{% block title %}{% trans "Drawing Results" %} – {{ child.first_name }} | Namaa{% endblock %}
+
+{% block head_extra %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  :root {
+    --emotion-calm-a:       #38bdf8;
+    --emotion-calm-b:       #0ea5e9;
+    --emotion-happy-a:      #fbbf24;
+    --emotion-happy-b:      #f59e0b;
+    --emotion-energetic-a:  #f97316;
+    --emotion-energetic-b:  #ef4444;
+    --emotion-overwhelmed-a:#8b5cf6;
+    --emotion-overwhelmed-b:#6d28d9;
+    --emotion-withdrawn-a:  #94a3b8;
+    --emotion-withdrawn-b:  #64748b;
+    --emotion-anxious-a:    #10b981;
+    --emotion-anxious-b:    #059669;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #0f172a;
+    min-height: 100vh;
+  }
+
+  /* ══════════════════════════════════
+     DYNAMIC EMOTION BACKGROUND
+  ══════════════════════════════════ */
+  .results-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    transition: background 1s ease;
+  }
+
+  {% if drawing.emotional_state == 'calm' %}
+  .results-bg { background: linear-gradient(135deg, #0c4a6e 0%, #083344 60%, #0f172a 100%); }
+  .blob-1 { background: radial-gradient(circle, #38bdf8 0%, transparent 70%); }
+  .blob-2 { background: radial-gradient(circle, #0ea5e9 0%, transparent 70%); }
+  {% elif drawing.emotional_state == 'happy' %}
+  .results-bg { background: linear-gradient(135deg, #78350f 0%, #451a03 60%, #1c0a00 100%); }
+  .blob-1 { background: radial-gradient(circle, #fbbf24 0%, transparent 70%); }
+  .blob-2 { background: radial-gradient(circle, #f59e0b 0%, transparent 70%); }
+  {% elif drawing.emotional_state == 'energetic' %}
+  .results-bg { background: linear-gradient(135deg, #7c1d1d 0%, #431407 60%, #0f172a 100%); }
+  .blob-1 { background: radial-gradient(circle, #f97316 0%, transparent 70%); }
+  .blob-2 { background: radial-gradient(circle, #ef4444 0%, transparent 70%); }
+  {% elif drawing.emotional_state == 'overwhelmed' %}
+  .results-bg { background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 60%, #0f172a 100%); }
+  .blob-1 { background: radial-gradient(circle, #8b5cf6 0%, transparent 70%); }
+  .blob-2 { background: radial-gradient(circle, #a855f7 0%, transparent 70%); }
+  {% elif drawing.emotional_state == 'anxious' %}
+  .results-bg { background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #0f172a 100%); }
+  .blob-1 { background: radial-gradient(circle, #10b981 0%, transparent 70%); }
+  .blob-2 { background: radial-gradient(circle, #34d399 0%, transparent 70%); }
+  {% else %}
+  .results-bg { background: linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #020617 100%); }
+  .blob-1 { background: radial-gradient(circle, #94a3b8 0%, transparent 70%); }
+  .blob-2 { background: radial-gradient(circle, #64748b 0%, transparent 70%); }
+  {% endif %}
+
+  .blob-1, .blob-2 {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    opacity: 0.12;
+    animation: blobDrift 12s ease-in-out infinite alternate;
+  }
+  .blob-1 { top: -100px; left: -100px; animation-delay: 0s; }
+  .blob-2 { bottom: -100px; right: -100px; animation-delay: -6s; }
+
+  @keyframes blobDrift {
+    0%   { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(60px, 40px) scale(1.2); }
+  }
+
+  /* ══════════════════════════════════
+     LAYOUT
+  ══════════════════════════════════ */
+  .results-page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding: 28px 20px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ══════════════════════════════════
+     TOP BAR
+  ══════════════════════════════════ */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .top-bar-left { display: flex; align-items: center; gap: 14px; }
+
+  .logo-mark {
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(10px);
+    font-size: 22px;
+  }
+
+  .page-title { font-size: 22px; font-weight: 900; color: white; line-height: 1.1; }
+  .page-subtitle { font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 600; margin-top: 2px; }
+
+  .top-bar-actions { display: flex; gap: 10px; }
+
+  .btn-glass {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.85);
+    font-weight: 700; font-size: 13px;
+    padding: 9px 18px; border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+  }
+  .btn-glass:hover { background: rgba(255,255,255,0.15); color: white; transform: translateY(-1px); }
+
+  .btn-primary {
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 800; font-size: 13px;
+    padding: 9px 20px; border-radius: 12px;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  {% if drawing.emotional_state == 'calm' %}
+  .btn-primary { background: linear-gradient(135deg,#38bdf8,#0ea5e9); color: white; }
+  {% elif drawing.emotional_state == 'happy' %}
+  .btn-primary { background: linear-gradient(135deg,#fbbf24,#f59e0b); color: #1c0a00; }
+  {% elif drawing.emotional_state == 'energetic' %}
+  .btn-primary { background: linear-gradient(135deg,#f97316,#ef4444); color: white; }
+  {% elif drawing.emotional_state == 'overwhelmed' %}
+  .btn-primary { background: linear-gradient(135deg,#8b5cf6,#6d28d9); color: white; }
+  {% elif drawing.emotional_state == 'anxious' %}
+  .btn-primary { background: linear-gradient(135deg,#10b981,#059669); color: white; }
+  {% else %}
+  .btn-primary { background: linear-gradient(135deg,#94a3b8,#64748b); color: white; }
+  {% endif %}
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.4); color: inherit; }
+
+  /* ══════════════════════════════════
+     HERO EMOTION BANNER
+  ══════════════════════════════════ */
+  .emotion-hero {
+    border-radius: 28px;
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    animation: heroReveal 0.7s cubic-bezier(.2,.8,.4,1) both;
+  }
+  {% if drawing.emotional_state == 'calm' %}
+  .emotion-hero { background: linear-gradient(135deg, rgba(56,189,248,0.18), rgba(14,165,233,0.08)); border-color: rgba(56,189,248,0.3); }
+  {% elif drawing.emotional_state == 'happy' %}
+  .emotion-hero { background: linear-gradient(135deg, rgba(251,191,36,0.18), rgba(245,158,11,0.08)); border-color: rgba(251,191,36,0.3); }
+  {% elif drawing.emotional_state == 'energetic' %}
+  .emotion-hero { background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(239,68,68,0.08)); border-color: rgba(249,115,22,0.3); }
+  {% elif drawing.emotional_state == 'overwhelmed' %}
+  .emotion-hero { background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(109,40,217,0.08)); border-color: rgba(139,92,246,0.3); }
+  {% elif drawing.emotional_state == 'anxious' %}
+  .emotion-hero { background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.08)); border-color: rgba(16,185,129,0.3); }
+  {% else %}
+  .emotion-hero { background: linear-gradient(135deg, rgba(148,163,184,0.18), rgba(100,116,139,0.08)); border-color: rgba(148,163,184,0.3); }
+  {% endif %}
+
+  @keyframes heroReveal {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .emotion-icon-big {
+    font-size: 72px;
+    line-height: 1;
+    animation: iconPop 0.5s 0.4s cubic-bezier(.2,2,.4,1) both;
+    flex-shrink: 0;
+  }
+  @keyframes iconPop {
+    from { opacity:0; transform: scale(0.4); }
+    to   { opacity:1; transform: scale(1); }
+  }
+
+  .emotion-hero-text { flex: 1; min-width: 200px; }
+
+  .emotion-state-label {
+    font-size: 46px;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    animation: fadeInUp 0.5s 0.5s ease both;
+  }
+
+  .emotion-detected-sub {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
+    animation: fadeInUp 0.5s 0.6s ease both;
+  }
+
+  .emotion-notes {
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.65;
+    font-weight: 600;
+    max-width: 600px;
+    animation: fadeInUp 0.5s 0.7s ease both;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity:0; transform: translateY(12px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* Confidence badge inside hero */
+  .confidence-hero-wrap {
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: fadeInUp 0.5s 0.8s ease both;
+  }
+
+  .confidence-ring-svg { width: 120px; height: 120px; }
+  .conf-ring-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
+  .conf-ring-fill {
+    fill: none; stroke-width: 8; stroke-linecap: round;
+    transform: rotate(-90deg); transform-origin: 60px 60px;
+    transition: stroke-dasharray 1.5s cubic-bezier(.4,0,.2,1);
+  }
+  {% if drawing.emotional_state == 'calm' %}
+  .conf-ring-fill { stroke: #38bdf8; }
+  {% elif drawing.emotional_state == 'happy' %}
+  .conf-ring-fill { stroke: #fbbf24; }
+  {% elif drawing.emotional_state == 'energetic' %}
+  .conf-ring-fill { stroke: #f97316; }
+  {% elif drawing.emotional_state == 'overwhelmed' %}
+  .conf-ring-fill { stroke: #a78bfa; }
+  {% elif drawing.emotional_state == 'anxious' %}
+  .conf-ring-fill { stroke: #10b981; }
+  {% else %}
+  .conf-ring-fill { stroke: #94a3b8; }
+  {% endif %}
+  .conf-ring-label {
+    font-size: 26px; font-weight: 900; color: white;
+    text-anchor: middle; dominant-baseline: central;
+  }
+  .conf-ring-sub {
+    font-size: 9px; font-weight: 700; fill: rgba(255,255,255,0.6);
+    text-anchor: middle;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+
+  /* ══════════════════════════════════
+     MAIN 3-COL GRID
+  ══════════════════════════════════ */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .main-grid { grid-template-columns: 1fr; } }
+
+  /* ══════════════════════════════════
+     GLASS CARD
+  ══════════════════════════════════ */
+  .gcard {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 22px;
+    padding: 22px;
+    backdrop-filter: blur(16px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    animation: cardReveal 0.6s ease both;
+  }
+  .gcard:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.18); }
+
+  @keyframes cardReveal {
+    from { opacity:0; transform: translateY(16px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .gcard:nth-child(1) { animation-delay: 0.05s; }
+  .gcard:nth-child(2) { animation-delay: 0.12s; }
+  .gcard:nth-child(3) { animation-delay: 0.19s; }
+  .gcard:nth-child(4) { animation-delay: 0.26s; }
+
+  .card-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.12em; color: rgba(255,255,255,0.45);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ——————————————
+     Drawing Preview Card
+  —————————————— */
+  .drawing-img-wrap {
+    background: white; border-radius: 14px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 260px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    margin-bottom: 14px;
+  }
+  .drawing-img-wrap img { width:100%; height:100%; object-fit: contain; display:block; }
+
+  .meta-pills { display:flex; gap:8px; flex-wrap:wrap; }
+  .meta-pill {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 999px;
+  }
+
+  /* ——————————————
+     Radar / Star Chart (SVG-based metrics spider)
+  —————————————— */
+  .radar-wrap { display:flex; justify-content:center; margin-bottom: 12px; }
+  .radar-svg { overflow: visible; }
+  .radar-axis { stroke: rgba(255,255,255,0.12); stroke-width: 1; fill: none; }
+  .radar-grid { stroke: rgba(255,255,255,0.08); stroke-width: 1; fill: none; }
+  .radar-fill { fill-opacity: 0.25; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  {% if drawing.emotional_state == 'calm' %}
+  .radar-fill { fill: #38bdf8; stroke: #38bdf8; }
+  {% elif drawing.emotional_state == 'happy' %}
+  .radar-fill { fill: #fbbf24; stroke: #fbbf24; }
+  {% elif drawing.emotional_state == 'energetic' %}
+  .radar-fill { fill: #f97316; stroke: #f97316; }
+  {% elif drawing.emotional_state == 'overwhelmed' %}
+  .radar-fill { fill: #a78bfa; stroke: #a78bfa; }
+  {% elif drawing.emotional_state == 'anxious' %}
+  .radar-fill { fill: #10b981; stroke: #10b981; }
+  {% else %}
+  .radar-fill { fill: #94a3b8; stroke: #94a3b8; }
+  {% endif %}
+
+  .radar-label { font-size: 9px; font-weight: 800; fill: rgba(255,255,255,0.6); text-anchor: middle; }
+
+  /* ——————————————
+     Animated bar
+  —————————————— */
+  .bar-row { margin-bottom: 14px; }
+  .bar-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.75);
+    margin-bottom: 6px;
+  }
+  .bar-track {
+    height: 7px; background: rgba(255,255,255,0.08);
+    border-radius: 999px; overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 999px;
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  {% if drawing.emotional_state == 'calm' %}
+  .bar-fill       { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.warm  { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .bar-fill.cool  { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.dark  { background: linear-gradient(90deg,#475569,#334155); }
+  .bar-fill.bright{ background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.pastel{ background: linear-gradient(90deg,#f9a8d4,#e879f9); }
+  {% elif drawing.emotional_state == 'happy' %}
+  .bar-fill       { background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.warm  { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .bar-fill.cool  { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.dark  { background: linear-gradient(90deg,#475569,#334155); }
+  .bar-fill.bright{ background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.pastel{ background: linear-gradient(90deg,#f9a8d4,#e879f9); }
+  {% elif drawing.emotional_state == 'energetic' %}
+  .bar-fill       { background: linear-gradient(90deg,#f97316,#ef4444); }
+  .bar-fill.warm  { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .bar-fill.cool  { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.dark  { background: linear-gradient(90deg,#475569,#334155); }
+  .bar-fill.bright{ background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.pastel{ background: linear-gradient(90deg,#f9a8d4,#e879f9); }
+  {% elif drawing.emotional_state == 'overwhelmed' %}
+  .bar-fill       { background: linear-gradient(90deg,#8b5cf6,#a855f7); }
+  .bar-fill.warm  { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .bar-fill.cool  { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.dark  { background: linear-gradient(90deg,#475569,#334155); }
+  .bar-fill.bright{ background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.pastel{ background: linear-gradient(90deg,#f9a8d4,#e879f9); }
+  {% elif drawing.emotional_state == 'anxious' %}
+  .bar-fill       { background: linear-gradient(90deg,#10b981,#059669); }
+  .bar-fill.warm  { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .bar-fill.cool  { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.dark  { background: linear-gradient(90deg,#475569,#334155); }
+  .bar-fill.bright{ background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.pastel{ background: linear-gradient(90deg,#f9a8d4,#e879f9); }
+  {% else %}
+  .bar-fill       { background: linear-gradient(90deg,#94a3b8,#64748b); }
+  .bar-fill.warm  { background: linear-gradient(90deg,#fb923c,#f97316); }
+  .bar-fill.cool  { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .bar-fill.dark  { background: linear-gradient(90deg,#475569,#334155); }
+  .bar-fill.bright{ background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .bar-fill.pastel{ background: linear-gradient(90deg,#f9a8d4,#e879f9); }
+  {% endif %}
+
+  /* ——————————————
+     Metric counter tiles
+  —————————————— */
+  .metric-tiles { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .metric-tile {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 14px; text-align: center;
+  }
+  .tile-val { font-size: 28px; font-weight: 900; color: white; line-height: 1; }
+  .tile-lbl { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* ——————————————
+     Color Palette card
+  —————————————— */
+  .swatches { display:flex; flex-wrap:wrap; gap:10px; }
+  .swatch-item { display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .swatch-circle {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.25);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease;
+    cursor: default;
+  }
+  .swatch-circle:hover { transform: scale(1.2); }
+  .swatch-hex { font-size: 8.5px; font-weight: 700; color: rgba(255,255,255,0.6); font-family:monospace; }
+
+  /* ——————————————
+     Spatial heatmap grid (6x4 visual)
+  —————————————— */
+  .spatial-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .spatial-cell {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.4);
+    transition: background 1s ease, color 1s ease;
+  }
+
+  .spatial-legend { display: flex; gap: 10px; font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 700; flex-wrap: wrap; }
+  .spatial-legend-item { display: flex; align-items: center; gap: 4px; }
+  .sleg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* ══════════════════════════════════
+     EMOTION BREAKDOWN BARS (all 6)
+  ══════════════════════════════════ */
+  .emotion-breakdown .emo-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .emo-row-icon { font-size: 18px; flex-shrink: 0; width: 24px; text-align: center; }
+  .emo-row-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.75); width: 90px; flex-shrink: 0; }
+  .emo-bar-track {
+    flex: 1; height: 8px; background: rgba(255,255,255,0.08);
+    border-radius: 999px; overflow: hidden;
+  }
+  .emo-bar-fill {
+    height: 100%; border-radius: 999px;
+    transition: width 1.3s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .emo-score-label {
+    font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.5);
+    width: 36px; text-align: right; flex-shrink: 0;
+  }
+
+  /* Unique color per emotion row */
+  .ebar-calm       { background: linear-gradient(90deg,#38bdf8,#0ea5e9); }
+  .ebar-happy      { background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .ebar-energetic  { background: linear-gradient(90deg,#f97316,#ef4444); }
+  .ebar-overwhelmed{ background: linear-gradient(90deg,#8b5cf6,#a855f7); }
+  .ebar-anxious    { background: linear-gradient(90deg,#10b981,#059669); }
+  .ebar-withdrawn  { background: linear-gradient(90deg,#64748b,#475569); }
+
+  .emo-row.active-emotion .emo-row-label { color: white; font-size: 13px; }
+  .emo-row.active-emotion .emo-bar-track { background: rgba(255,255,255,0.15); }
+
+  /* ══════════════════════════════════
+     TIPS / RECOMMENDATIONS
+  ══════════════════════════════════ */
+  .tips-list { list-style: none; padding: 0; margin: 0; }
+  .tips-list li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 600;
+    line-height: 1.5; margin-bottom: 12px;
+  }
+  .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ══════════════════════════════════
+     FULL-GRID span helper
+  ══════════════════════════════════ */
+  .col-span-full { grid-column: 1 / -1; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-bg">
+  <div class="blob-1"></div>
+  <div class="blob-2"></div>
+</div>
+
+<div class="results-page">
+
+  <!-- ══ TOP BAR ══ -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="logo-mark">🎨</div>
+      <div>
+        <div class="page-title">{% blocktrans with name=child.first_name %}{{ name }}'s Drawing Analysis{% endblocktrans %}</div>
+        <div class="page-subtitle">{{ drawing.upload_date|date:"F j, Y — g:i A" }}</div>
+      </div>
+    </div>
+    <div class="top-bar-actions">
+      <a href="{% url 'core:my_children' %}" class="btn-glass">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 12h18M10 5l-7 7 7 7"/></svg>
+        {% trans "Children" %}
+      </a>
+      <a href="{% url 'core:drawing_reanalyze' drawing.id %}" class="btn-glass" title="{% trans "Refresh analysis with latest engine" %}">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        {% trans "Re-analyze" %}
+      </a>
+      <a href="{% url 'core:drawing_canvas' child.id %}" class="btn-primary">
+        🎨 {% trans "Draw Again" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Stale Data Warning -->
+  {% if drawing.warm_ratio == 0 and drawing.emotional_state %}
+  <div class="gcard col-span-full" style="background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; padding: 14px 22px;">
+    <span style="font-size: 20px;">⚠️</span>
+    <div style="flex: 1;">
+      <div style="font-size: 14px; font-weight: 800; color: #fbbf24;">{% trans "Analysis data may be outdated" %}</div>
+      <div style="font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7);">{% trans "This drawing was analyzed with an older version of our engine. Click 'Re-analyze' above for more detailed metrics." %}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if drawing.emotional_state %}
+
+  <!-- ══ EMOTION HERO BANNER ══ -->
+  <div class="emotion-hero">
+    <div class="emotion-icon-big">
+      {% if drawing.emotional_state == 'calm' %}😌
+      {% elif drawing.emotional_state == 'happy' %}😄
+      {% elif drawing.emotional_state == 'energetic' %}⚡
+      {% elif drawing.emotional_state == 'overwhelmed' %}😰
+      {% elif drawing.emotional_state == 'anxious' %}😟
+      {% else %}😶
+      {% endif %}
+    </div>
+
+    <div class="emotion-hero-text">
+      <div class="emotion-detected-sub">🧠 {% trans "Detected Emotional State" %}</div>
+      <div class="emotion-state-label">
+        {% if drawing.emotional_state == 'calm' %}{% trans "Calm" %}
+        {% elif drawing.emotional_state == 'happy' %}{% trans "Happy" %}
+        {% elif drawing.emotional_state == 'energetic' %}{% trans "Energetic" %}
+        {% elif drawing.emotional_state == 'overwhelmed' %}{% trans "Overwhelmed" %}
+        {% elif drawing.emotional_state == 'anxious' %}{% trans "Anxious" %}
+        {% else %}{% trans "Withdrawn" %}
+        {% endif %}
+      </div>
+      <p class="emotion-notes">{% trans drawing.analysis_notes %}</p>
+    </div>
+
+  </div>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <div style="max-width: 600px; margin: 0 auto;">
+    <!-- ─── Drawing Preview ─── -->
+    <div class="gcard">
+      <div class="card-label">🖼️ {% trans "Saved Drawing" %}</div>
+      <div class="drawing-img-wrap">
+        <img src="{{ drawing.image_path.url }}" alt="Drawing by {{ child.first_name }}">
+      </div>
+      <div class="meta-pills" style="justify-content: center;">
+        <span class="meta-pill">📅 {{ drawing.draw_date|date:"M d, Y" }}</span>
+        <span class="meta-pill">👧 {{ child.first_name }}</span>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- No analysis fallback -->
+  <div class="gcard col-span-full" style="text-align:center; padding:40px;">
+    <div style="font-size:48px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:18px;font-weight:800;color:white;margin-bottom:8px;">{% trans "Analysis Unavailable" %}</div>
+    <p style="color:rgba(255,255,255,0.6);font-size:14px;">{% trans "The emotional analysis could not be completed for this drawing. Please try saving a new drawing." %}</p>
+  </div>
+  {% endif %}
+
+</div><!-- /results-page -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const state = "{{ drawing.emotional_state|default:'' }}";
+
+  // ── Animate confidence ring ──────────────────────────────────────
+  const confVal = parseFloat("{{ drawing.confidence|unlocalize|floatformat:3 }}") || 0;
+  const confPct = Math.round(confVal * 100);
+  const CIRCUMFERENCE = 2 * Math.PI * 50; 
+
+  const ringFill = document.getElementById('confRingFill');
+  const ringText = document.getElementById('confRingText');
+
+  if (ringFill) {
+    setTimeout(() => {
+      const dashLen = (confPct / 100) * CIRCUMFERENCE;
+      ringFill.setAttribute('stroke-dasharray', `${dashLen} ${CIRCUMFERENCE}`);
+
+      if (confPct <= 0) {
+        if (ringText) ringText.textContent = '—';
+        return;
+      }
+
+      // Count-up animation
+      let current = 0;
+      const target = confPct;
+      const step = target / 60;
+      const interval = setInterval(() => {
+        current = Math.min(current + step, target);
+        if (ringText) ringText.textContent = Math.round(current) + '%';
+        if (current >= target) clearInterval(interval);
+      }, 16);
+    }, 400);
+  }
+
+  // Unused animations have been removed to keep the interface simple.
+
+});
+</script>
+{% endblock %}

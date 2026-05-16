@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static i18n l10n %}
+
+{% block title %}{% trans "Progress Tracking" %} – {{ child.first_name }} | Namaa{% endblock %}
+
+{% block content %}
+<div class="flex">
+    {% include 'partials/parent_sidebar.html' %}
+
+    <main class="ms-64 flex-1 p-8">
+        <!-- Header -->
+        <header class="mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'core:treatment_plan_detail' plan.id %}" class="text-sage-500 hover:text-sage-600 transition-colors">
+                    <svg class="w-6 h-6 rtl:scale-x-[-1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{% trans "Progress Tracking" %}</h1>
+                    <p class="text-gray-600">{{ child.first_name }} {{ child.last_name }} &mdash; <span class="font-semibold text-sage-600">{{ today|date:"F d, Y" }}</span></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-end">
+                    <p class="font-medium text-gray-800" id="headerName">
+                        {{ request.user.first_name }} {{ request.user.last_name }}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+                    </p>
+                </div>
+                <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                    {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+                </div>
+            </div>
+        </header>
+
+        {% if not indicators_data %}
+        <!-- Empty State -->
+        <div class="max-w-2xl mx-auto text-center py-24">
+            <div class="w-20 h-20 bg-sage-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-chart-line text-3xl text-sage-400"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-700 mb-2">{% trans "No Indicators Yet" %}</h2>
+            <p class="text-gray-500 mb-6">{% trans "The therapist hasn't added any indicators to track yet. They will appear here after a session is submitted." %}</p>
+            <a href="{% url 'core:treatment_plan_detail' plan.id %}" class="inline-flex items-center gap-2 px-6 py-3 bg-sage-500 text-white rounded-xl font-semibold hover:bg-sage-600 transition-colors">
+                <i class="fas fa-arrow-left"></i> {% trans "Back to Treatment Plan" %}
+            </a>
+        </div>
+        {% else %}
+
+        <div class="max-w-3xl space-y-8">
+            {% for entry in indicators_data %}
+            {% with tpi=entry.tpi today_record=entry.today_record history=entry.history %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-md">
+
+                <!-- Indicator Header -->
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-sage-50 flex items-center justify-center">
+                            <i class="fas fa-chart-line text-sage-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">{{ tpi.indicator.metric_name }}</h3>
+                            {% if tpi.description %}
+                            <p class="text-xs text-gray-500 mt-0.5">{{ tpi.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if today_record %}
+                    <div class="text-right">
+                        <div class="text-2xl font-black
+                            {% if today_record.indicator_value >= 70 %}text-emerald-500
+                            {% elif today_record.indicator_value >= 40 %}text-amber-500
+                            {% else %}text-red-400{% endif %}">
+                            {{ today_record.indicator_value|floatformat:0 }}<span class="text-sm font-semibold text-gray-400">/100</span>
+                        </div>
+                        <div class="text-xs text-gray-400">{% trans "Today" %}</div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if today_record %}
+                <!-- Progress Bar for today -->
+                <div class="px-6 pt-4">
+                    <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-700
+                            {% if today_record.indicator_value >= 70 %}bg-gradient-to-r from-emerald-400 to-emerald-500
+                            {% elif today_record.indicator_value >= 40 %}bg-gradient-to-r from-amber-400 to-amber-500
+                            {% else %}bg-gradient-to-r from-red-400 to-red-500{% endif %}"
+                            style="width: {{ today_record.indicator_value|unlocalize|floatformat:0|default:0 }}%">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Submit Form -->
+                <form method="POST" action="{% url 'core:parent_progress_submit' today_record.id %}" class="p-6">
+                    {% csrf_token %}
+
+                    <!-- Indicator Value Slider -->
+                    <div class="mb-6">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-3">{% trans "Today's Assessment" %} (0–100)</label>
+                        <div class="flex items-center gap-6">
+                            <input type="range" name="indicator_value" min="0" max="100" step="5"
+                                value="{{ today_record.indicator_value|floatformat:0 }}"
+                                class="flex-1 h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-sage-500"
+                                oninput="this.nextElementSibling.innerText = this.value + '%'"
+                                {% if today_record.is_submitted %}disabled{% endif %}>
+                            <span class="text-lg font-bold text-sage-600 w-12 text-right">{{ today_record.indicator_value|floatformat:0 }}%</span>
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-2">{% trans "Slide to reflect today's progress for this indicator." %}</p>
+                    </div>
+
+                    <!-- Parent Note -->
+                    <div class="mb-4">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1.5">{% trans "Your Note (optional)" %}</label>
+                        <textarea name="notes" rows="2"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage-500 transition-all resize-none"
+                            placeholder="{% trans 'Add any observations or notes...' %}"
+                            {% if today_record.is_submitted %}readonly{% endif %}>{{ today_record.notes|default:'' }}</textarea>
+                    </div>
+
+                    {% if not today_record.is_submitted %}
+                    <button type="submit"
+                        class="w-full py-3 bg-gradient-to-br from-sage-500 to-sage-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-sage-200 hover:shadow-sage-300 hover:scale-[1.01] transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i>
+                        {% trans "Submit Progress" %}
+                    </button>
+                    {% else %}
+                    <div class="flex items-center justify-center gap-2 p-3 bg-emerald-50 text-emerald-700 rounded-xl font-bold text-sm border border-emerald-100">
+                        <i class="fas fa-check-circle text-emerald-500"></i>
+                        {% trans "Submitted for Today" %}
+                    </div>
+                    {% endif %}
+                </form>
+                {% endif %}
+
+                <!-- History Section -->
+                {% if history %}
+                <details class="border-t border-gray-100">
+                    <summary class="px-6 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-50 transition-colors list-none flex items-center justify-between">
+                        <span><i class="fas fa-history me-1.5"></i> {% trans "Past Records" %} ({{ history|length }})</span>
+                        <i class="fas fa-chevron-down text-gray-300 transition-transform"></i>
+                    </summary>
+                    <div class="divide-y divide-gray-50">
+                        {% for rec in history %}
+                        <div class="px-6 py-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-semibold text-gray-600">{{ rec.date|date:"M d, Y" }}</span>
+                                {% if rec.notes %}
+                                <p class="text-xs text-gray-400 italic mt-0.5">{{ rec.notes }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-black
+                                    {% if rec.indicator_value >= 70 %}text-emerald-500
+                                    {% elif rec.indicator_value >= 40 %}text-amber-500
+                                    {% else %}text-red-400{% endif %}">
+                                    {{ rec.indicator_value|floatformat:0 }}
+                                </span>
+                                <span class="text-xs text-gray-400">/100</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </details>
+                {% endif %}
+
+            </div>
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    details[open] summary .fa-chevron-down {
+        transform: rotate(180deg);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static i18n l10n %}
+
+{% block title %}Plan Details - {{ plan.child.first_name }} - Namaa{% endblock %}
+
+{% block content %}
+<div class="flex">
+    <!-- Sidebar -->
+    {% include 'partials/therapist_sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="ms-64 flex-1 p-8">
+        <!-- Header -->
+        <header class="mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'core:therapist_treatment_plans' %}" class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-gray-400 hover:text-sage-600 hover:shadow-md transition-all">
+                    <svg class="w-5 h-5 rtl:scale-x-[-1]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">{% trans "Treatment Plan Details" %}</h1>
+                    <p class="text-gray-600">{% blocktrans with child_name=plan.child.first_name child_last=plan.child.last_name %}Managing care for {{ child_name }} {{ child_last }}{% endblocktrans %}</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                {% if plan.status != 'completed' %}
+                <button onclick="confirmComplete()" class="flex items-center gap-2 px-4 py-2 bg-sage-500 text-white text-sm font-bold rounded-lg hover:bg-sage-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    {% trans "Mark as Completed" %}
+                </button>
+                {% endif %}
+                <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg shadow-sm">
+                    {{ plan.child.first_name|make_list|first|upper }}{{ plan.child.last_name|make_list|first|upper }}
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Child Info & Plan Status -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Status Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">{% trans "Plan Status" %}</h3>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center 
+                            {% if plan.status == 'active' %}bg-sage-50 text-sage-600
+                            {% elif plan.status == 'completed' %}bg-blue-50 text-blue-600
+                            {% else %}bg-orange-50 text-orange-600{% endif %}">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase">{% trans "Current Status" %}</p>
+                            <p class="text-xl font-black text-gray-800">{{ plan.get_status_display }}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-4 border-t border-gray-50">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">{% trans "Started on" %}</span>
+                            <span class="font-bold text-gray-700">{{ plan.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">{% trans "Total Sessions" %}</span>
+                            <span class="font-bold text-gray-700">{{ sessions.count }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">{% trans "Child Age" %}</span>
+                            <span class="font-bold text-gray-700">6 {% trans "years" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">{% trans "Goals" %}</p>
+                        <p class="text-2xl font-black text-sage-600">{{ goals.count }}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">{% trans "Sessions" %}</p>
+                        <p class="text-2xl font-black text-sage-600">{{ sessions.count }}</p>
+                    </div>
+                </div>
+
+                <!-- Child Detail Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">{% trans "Patient Information" %}</h3>
+                    <div class="space-y-4">
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">{% trans "Full Name" %}</p>
+                            <p class="font-bold text-gray-700">{{ plan.child.first_name }} {{ plan.child.last_name }}</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">{% trans "Date of Birth" %}</p>
+                            <p class="font-bold text-gray-700">{{ plan.child.date_of_birth|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">{% trans "Parent" %}</p>
+                            <p class="font-bold text-gray-700">{{ plan.child.parents.user.get_full_name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Detail Tabs/Sections -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Section: Goals & Treatments -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Goals -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="font-black text-gray-800 flex items-center gap-2 mb-4">
+                            <svg class="w-5 h-5 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            {% trans "Therapeutic Goals" %}
+                            <span class="ms-auto bg-sage-50 text-sage-600 text-xs font-bold px-2 py-1 rounded-lg">{{ goals.count }}</span>
+                        </h3>
+                        <div class="space-y-2 mb-4">
+                            {% for goal in goals %}
+                            <div class="flex items-start gap-2 p-3 border-s-4 border-sage-400 bg-sage-50 rounded-e-xl">
+                                <p class="text-sm text-gray-700 flex-1">{{ goal.target_description }}</p>
+                                <form method="POST" onsubmit="return confirm('Delete this goal?')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete_goal">
+                                    <input type="hidden" name="goal_id" value="{{ goal.id }}">
+                                    <button type="submit" class="text-gray-300 hover:text-red-400 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                                </form>
+                            </div>
+                            {% empty %}
+                            <p class="text-sm text-gray-400 italic">{% trans "No goals defined yet." %}</p>
+                            {% endfor %}
+                        </div>
+                        <form method="POST" class="flex gap-2 mt-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="add_goal">
+                            <input type="text" name="goal_description" required placeholder="{% trans 'New goal...' %}" class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">
+                            <button type="submit" class="px-4 py-2 bg-sage-500 text-white text-sm font-bold rounded-lg hover:bg-sage-600 transition-colors">+ {% trans "Add" %}</button>
+                        </form>
+                    </div>
+
+                    <!-- Treatments -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="font-black text-gray-800 flex items-center gap-2 mb-4">
+                            <svg class="w-5 h-5 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            {% trans "Treatment Methods" %}
+                            <span class="ms-auto bg-sage-50 text-sage-600 text-xs font-bold px-2 py-1 rounded-lg">{{ treatments.count }}</span>
+                        </h3>
+                        <div class="space-y-2 mb-4">
+                            {% for treatment in treatments %}
+                            <div class="flex items-start gap-2 p-3 border-s-4 border-sage-400 bg-sage-50 rounded-e-xl">
+                                <div class="flex-1">
+                                    <p class="text-xs font-bold text-sage-600 uppercase">{{ treatment.type }}</p>
+                                    <p class="text-sm text-gray-700">{{ treatment.description }}</p>
+                                </div>
+                                <form method="POST" onsubmit="return confirm('Delete?')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete_treatment">
+                                    <input type="hidden" name="treatment_id" value="{{ treatment.id }}">
+                                    <button type="submit" class="text-gray-300 hover:text-red-400 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                                </form>
+                            </div>
+                            {% empty %}
+                            <p class="text-sm text-gray-400 italic">{% trans "No treatments recorded." %}</p>
+                            {% endfor %}
+                        </div>
+                        <form method="POST" class="space-y-2 mt-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="add_treatment">
+                            <input type="text" name="treatment_type" placeholder="{% trans 'Type (e.g. Speech)' %}" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">
+                            <div class="flex gap-2">
+                                <input type="text" name="treatment_description" required placeholder="{% trans 'Description...' %}" class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">
+                                <button type="submit" class="px-4 py-2 bg-sage-500 text-white text-sm font-bold rounded-lg hover:bg-sage-600 transition-colors">+ {% trans "Add" %}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Section: Diagnosis (single per plan) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-black text-gray-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        {% trans "Clinical Diagnosis" %}
+                        {% if diagnosis %}<span class="ms-auto px-2 py-0.5 bg-sage-100 text-sage-700 text-[10px] font-bold rounded uppercase">{{ diagnosis.status }}</span>{% endif %}
+                    </h3>
+                    <form method="POST" class="space-y-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_diagnosis">
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase mb-1 block">{% trans "Status" %}</label>
+                            <input type="text" name="diagnosis_status" value="{{ diagnosis.status|default:'' }}" placeholder="{% trans 'e.g. Mild Autism' %}" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-gray-400 uppercase mb-1 block">{% trans "Description" %}</label>
+                            <textarea name="diagnosis_description" rows="3" placeholder="{% trans 'Clinical observations...' %}" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">{{ diagnosis.description|default:'' }}</textarea>
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-sage-500 text-white text-sm font-bold rounded-lg hover:bg-sage-600 transition-colors">{% trans "Save Diagnosis" %}</button>
+                    </form>
+                </div>
+
+                <!-- Section: Sessions History -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-black text-gray-800 mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {% trans "Session History" %}
+                    </h3>
+                    <div class="space-y-4">
+                        {% for session in sessions %}
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-sage-100 transition-all group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex flex-col items-center justify-center text-gray-800 group-hover:bg-sage-500 group-hover:text-white transition-colors">
+                                    <span class="text-[10px] font-black uppercase tracking-tighter">{{ session.date|date:"M" }}</span>
+                                    <span class="text-lg font-black leading-none">{{ session.date|date:"d" }}</span>
+                                </div>
+                                <div class="text-start">
+                                    <p class="font-bold text-gray-800">{% trans "Session" %} #{{ forloop.revcounter }}</p>
+                                    <p class="text-xs text-gray-500">{{ session.date|date:"h:i A" }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="hidden md:block text-end">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase">{% trans "Notes" %}</p>
+                                    <p class="text-xs text-gray-600 truncate max-w-[200px]">
+                                        {% if session.notes %}
+                                            {{ session.notes }}
+                                        {% else %}
+                                            {% trans "No notes provided" %}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <span class="px-3 py-1 bg-white border border-gray-200 text-[10px] font-bold rounded-lg uppercase
+                                    {% if session.status == 'completed' %}text-blue-600
+                                    {% elif session.status == 'scheduled' %}text-orange-600
+                                    {% else %}text-red-600{% endif %}">
+                                    {{ session.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="py-8 text-center bg-gray-50 rounded-2xl">
+                            <p class="text-gray-400 text-sm">{% trans "No sessions found for this plan." %}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Section: Progress Indicators -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-black text-gray-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        {% trans "Progress Indicators" %}
+                    </h3>
+                    <div class="space-y-3 mb-4">
+                        {% for tpi in plan_indicators %}
+                        <details class="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+                            <summary class="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors list-none">
+                                <div class="flex-1">
+                                    <span class="font-bold text-gray-800 text-sm">{{ tpi.indicator.metric_name }}</span>
+                                    {% if tpi.description %}<p class="text-xs text-gray-500">{{ tpi.description }}</p>{% endif %}
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-gray-400">{{ tpi.progress_records.count }} {% trans "entries" %}</span>
+                                    <form method="POST" onsubmit="return confirm('Remove indicator?')">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="delete_indicator">
+                                        <input type="hidden" name="tpi_id" value="{{ tpi.id }}">
+                                        <button type="submit" class="text-gray-300 hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                                    </form>
+                                </div>
+                            </summary>
+                            <div class="divide-y divide-gray-100 border-t border-gray-100">
+                                {% for record in tpi.progress_records.all|dictsortreversed:"date" %}
+                                <div class="px-4 py-3 flex items-center justify-between">
+                                    <span class="text-xs font-bold text-gray-600">{{ record.date|date:"M d, Y" }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden"><div class="h-full bg-sage-500 rounded-full" style="width: {{ record.indicator_value|unlocalize|floatformat:0|default:0 }}%"></div></div>
+                                        <span class="text-xs font-black {% if record.indicator_value >= 70 %}text-emerald-600{% elif record.indicator_value >= 40 %}text-amber-600{% else %}text-red-500{% endif %}">{{ record.indicator_value|floatformat:0 }}%</span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p class="px-4 py-3 text-xs text-gray-400 italic">{% trans "No entries yet." %}</p>
+                                {% endfor %}
+                            </div>
+                        </details>
+                        {% empty %}
+                        <p class="text-sm text-gray-400 italic">{% trans "No indicators linked to this plan yet." %}</p>
+                        {% endfor %}
+                    </div>
+                    <form method="POST" class="flex gap-2 flex-wrap">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add_indicator">
+                        <select name="indicator_id" required class="flex-1 min-w-[180px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">
+                            <option value="">-- {% trans "Select Indicator" %} --</option>
+                            {% for ind in all_indicators %}
+                            <option value="{{ ind.id }}" {% if ind.id in linked_indicator_ids %}disabled{% endif %}>{{ ind.metric_name }}{% if ind.id in linked_indicator_ids %} ✓{% endif %}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="text" name="indicator_description" placeholder="{% trans 'Note for parent (optional)' %}" class="flex-1 min-w-[160px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400">
+                        <button type="submit" class="px-4 py-2 bg-sage-500 text-white text-sm font-bold rounded-lg hover:bg-sage-600 transition-colors">+ {% trans "Link" %}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="completeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 transform transition-all">
+        <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-xl font-black text-gray-800 mb-2">{% trans "Complete Treatment Plan?" %}</h3>
+            <p class="text-gray-500 text-sm mb-8">{% blocktrans with child_name=plan.child.first_name %}You are about to mark the treatment plan for <span class="font-bold text-gray-800">{{ child_name }}</span> as completed. This will move the plan to records.{% endblocktrans %}</p>
+            
+            <div class="flex gap-4 w-full">
+                <button onclick="closeModal()" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">
+                    {% trans "Cancel" %}
+                </button>
+                <a href="{% url 'core:therapist_complete_plan' plan.id %}" class="flex-1 py-3 bg-sage-600 text-white font-bold rounded-xl hover:bg-sage-700 shadow-lg shadow-sage-200 transition-all text-center">
+                    {% trans "Yes, Complete" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmComplete() {
+        document.getElementById('completeModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('completeModal').classList.add('hidden');
+    }
+
+    // Close on click outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('completeModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+{% endblock %}
