@@ -8,5 +8,8 @@ urlpatterns = [
     path('auth/logout/', views.logout_view, name='logout'),
     path('parent/profile/', views.parent_profile_view, name='parent_profile'),
     path('therapist/profile/', views.therapist_profile_view, name='therapist_profile'),
+    path('parent/children/', views.my_children_view, name='my_children'),
+    path('parent/assessment/', views.assessment_view, name='assessment'),
+    path('therapist/children/', views.therapist_children_view, name='therapist_children'),
   
 ]

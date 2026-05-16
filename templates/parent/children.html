@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}My Children - Namaa{% endblock %}
+
+{% block content %}
+<div class="flex">
+  <!-- Sidebar -->
+  {% include 'partials/parent_sidebar.html' %}
+
+  <!-- Main Content -->
+  <main class="ms-64 flex-1 p-8">
+    <header class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">{% trans "My Children" %}</h1>
+        <p class="text-gray-600">{% trans "View your linked children and their progress" %}</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-end">
+          <p class="font-medium text-gray-800" id="headerName">
+            {% if request.user.is_authenticated %}
+            {{ request.user.first_name }} {{ request.user.last_name }}
+            {% else %}
+            {% trans "Loading..." %}
+            {% endif %}
+          </p>
+          <p class="text-sm text-gray-500" id="parentCode">
+            {% if request.user.is_authenticated and request.user.parent_profile %}
+            {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+            {% else %}
+            {% trans "Parent Code" %}: ---
+            {% endif %}
+          </p>
+        </div>
+        <div
+          class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg"
+          id="headerAvatar">
+          {% if request.user.is_authenticated %}
+          {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+          {% else %}
+          --
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div id="childrenContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for child in children %}
+      <div class="bg-white rounded-xl shadow-sm p-6 card-hover border border-gray-100">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="relative">
+            {% if child.latest_drawing %}
+              <img src="{{ child.latest_drawing.image_path.url }}" alt="{{ child.first_name }}" 
+                   class="w-16 h-16 rounded-full object-cover border-2 border-sage-200">
+              <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-[10px] text-white shadow-sm border-2 border-white" title="{% trans 'Recent Drawing' %}">
+                🎨
+              </div>
+            {% else %}
+              <div class="w-16 h-16 bg-sage-100 rounded-full flex items-center justify-center text-sage-600 font-bold text-2xl">
+                {{ child.first_name|first|upper }}
+              </div>
+            {% endif %}
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-800">{{ child.first_name }} {{ child.last_name }}</h3>
+            <p class="text-gray-500">{% trans "Born" %}: {{ child.date_of_birth|date:"M d, Y" }}</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 mb-6">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-500">{% trans "Active Plans" %}</span>
+            <span class="font-semibold text-gray-800">{{ child.active_plans_count }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-gray-500">{% trans "Total Sessions" %}</span>
+            <span class="font-semibold text-gray-800">{{ child.total_sessions }}</span>
+          </div>
+        </div>
+
+        <div class="mt-auto space-y-3">
+          {% with active_plan=child.active_plan %}
+          {% if active_plan %}
+          <a href="{% url 'core:treatment_plan_detail' active_plan.id %}"
+            class="w-full flex items-center justify-center gap-2 bg-sage-500 hover:bg-sage-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm hover:shadow-md group">
+            <span>{% trans "View Treatment Plan" %}</span>
+            <svg class="w-5 h-5 rtl:scale-x-[-1] transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+          {% else %}
+          <div
+            class="w-full flex items-center justify-center gap-2 bg-gray-50 text-gray-400 font-bold py-3 px-4 rounded-xl border border-dashed border-gray-200 cursor-not-allowed">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+              </path>
+            </svg>
+            <span>{% trans "No Treatment Plan" %}</span>
+          </div>
+          {% endif %}
+          {% endwith %}
+
+          <!-- Drawing Canvas Button -->
+          {% if child.active_plan %}
+          <a href="{% url 'core:drawing_canvas' child.id %}"
+            class="w-full flex items-center justify-center gap-2 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm hover:shadow-md group">
+            <span>🎨</span>
+            <span>{% trans "Open Drawing Canvas" %}</span>
+            <svg class="w-4 h-4 rtl:scale-x-[-1] transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-span-full text-center py-20 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+            </path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-800">{% trans "No children linked yet" %}</h3>
+        <p class="text-gray-500 mb-6">{% trans "Share your Parent Code with a clinic to link your children." %}</p>
+        <div class="flex justify-center">
+          <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 font-mono text-sage-600">
+            {{ request.user.parent_profile.parent_shared_id }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/mock-data.js' %}"></script>
+<script src="{% static 'js/auth.js' %}"></script>
+<script src="{% static 'js/parent-dashboard.js' %}"></script>
+{% endblock %}

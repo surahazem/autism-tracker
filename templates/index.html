@@ -1,0 +1,427 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}
+  {% trans "Namaa - Autism Developmental Tracker" %}
+{% endblock %}
+
+{% block content %}
+
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="{% url 'core:index' %}" class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-sage-400 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+            <span class="text-xl font-semibold text-gray-800">{% trans "Namaa" %}</span>
+          </a>
+        </div>
+
+        <div class="hidden md:flex items-center gap-6">
+          <a href="#features" class="text-gray-600 hover:text-sage-500 transition-colors">{% trans "Features" %}</a>
+          <a href="#about" class="text-gray-600 hover:text-sage-500 transition-colors">{% trans "About" %}</a>
+          <a href="#contact" class="text-gray-600 hover:text-sage-500 transition-colors">{% trans "Contact" %}</a>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- Language Switcher -->
+          <div class="flex items-center gap-2 text-sm font-medium border-r pe-4 me-2 border-gray-200">
+            {% get_current_language as LANGUAGE_CODE %}
+            <form action="{% url 'set_language' %}" method="post" class="flex gap-2">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ request.get_full_path|slice:'3:' }}">
+              <button name="language" value="en" class="{% if LANGUAGE_CODE == 'en' %}text-sage-500 font-bold underline{% else %}text-gray-500 hover:text-sage-400{% endif %}">EN</button>
+              <span class="text-gray-300">|</span>
+              <button name="language" value="ar" class="{% if LANGUAGE_CODE == 'ar' %}text-sage-500 font-bold underline{% else %}text-gray-500 hover:text-sage-400{% endif %}">عربي</button>
+            </form>
+          </div>
+
+          {% if user.is_authenticated %}
+            <div class="relative">
+              <button id="userMenuBtn" class="flex items-center gap-2 px-3 py-2 bg-sage-50 rounded-lg hover:bg-sage-100">
+                <div class="w-8 h-8 bg-sage-400 text-white rounded-full flex items-center justify-center font-semibold">{{ user.username|slice:':1'|upper }}</div>
+              </button>
+              <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
+                {% if user.therapist_profile %}
+                  <a href="{% url 'core:therapist_dashboard' %}" class="block px-4 py-2 hover:bg-gray-100">{% trans "Dashboard" %}</a>
+                {% else %}
+                  <a href="{% url 'core:parent_dashboard' %}" class="block px-4 py-2 hover:bg-gray-100">{% trans "Dashboard" %}</a>
+                {% endif %}
+                {% if user.therapist_profile %}
+                  <a href="{% url 'core:therapist_profile' %}" class="block px-4 py-2 hover:bg-gray-100">{% trans "Profile" %}</a>
+                {% else %}
+                  <a href="{% url 'core:parent_profile' %}" class="block px-4 py-2 hover:bg-gray-100">{% trans "Profile" %}</a>
+                {% endif %}
+                <a href="{% url 'core:logout' %}" class="block px-4 py-2 text-red-500 hover:bg-gray-100">{% trans "Logout" %}</a>
+              </div>
+            </div>
+          {% else %}
+            <a href="{% url 'core:login' %}" class="px-4 py-2 text-sage-600 font-medium hover:text-sage-700">{% trans "Login" %}</a>
+            <a href="{% url 'core:register' %}" class="px-4 py-2 bg-sage-400 text-white font-medium rounded-lg hover:bg-sage-500">{% trans "Register" %}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <section class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="page-transition">
+          <span class="inline-block px-3 py-1 bg-sage-100 text-sage-600 rounded-full text-sm font-medium mb-4">{% trans "Supporting Developmental Growth" %}</span>
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-800 leading-tight mb-6">
+            {% trans "Nurturing Every Child's" %}
+            <span class="text-sage-400">{% trans "Unique Journey" %}</span>
+          </h1>
+          <p class="text-lg text-gray-600 mb-8 leading-relaxed">{% trans "Namaa is a comprehensive platform connecting parents and therapists to track developmental progress, manage treatment plans, and celebrate every milestone in your child's growth." %}</p>
+          <div class="flex flex-wrap gap-4">
+            <a href="{% url 'core:register' %}" class="px-6 py-3 bg-sage-400 text-white font-medium rounded-lg hover:bg-sage-500 transition-colors shadow-lg shadow-sage-400/30">{% trans "Get Started" %}</a>
+            <a href="#features" class="px-6 py-3 border-2 border-sage-400 text-sage-600 font-medium rounded-lg hover:bg-sage-50 transition-colors">{% trans "Learn More" %}</a>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="bg-white rounded-2xl shadow-xl p-8 card-hover">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-16 h-16 bg-sage-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-800">{% trans "Family Centered Care" %}</h3>
+                <p class="text-gray-500 text-sm">{% trans "Connecting parents and therapists" %}</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 p-3 bg-cream-50 rounded-lg">
+                <div class="w-8 h-8 bg-sage-400 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-gray-700">{% trans "Track developmental milestones" %}</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-cream-50 rounded-lg">
+                <div class="w-8 h-8 bg-sage-400 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-gray-700">{% trans "Monitor treatment progress" %}</span>
+              </div>
+              <div class="flex items-center gap-3 p-3 bg-cream-50 rounded-lg">
+                <div class="w-8 h-8 bg-sage-400 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <span class="text-gray-700">{% trans "Secure communication" %}</span>
+              </div>
+            </div>
+          </div>
+          <!-- Decorative elements -->
+          <div class="absolute -top-4 -right-4 w-24 h-24 bg-sky-300/30 rounded-full blur-xl"></div>
+          <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-sage-300/30 rounded-full blur-xl"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="py-20 px-4 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">{% trans "Comprehensive Care Management" %}</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">{% trans "Everything you need to support your child's journey in one place." %}</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="p-6 bg-cream-50 rounded-xl card-hover">
+          <div class="w-12 h-12 bg-sage-400 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">{% trans "Treatment Plans" %}</h3>
+          <p class="text-gray-600">{% trans "Detailed treatment plans with goals, therapies, and progress tracking tailored to each child." %}</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="p-6 bg-cream-50 rounded-xl card-hover">
+          <div class="w-12 h-12 bg-sky-400 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">{% trans "Session Management" %}</h3>
+          <p class="text-gray-600">{% trans "Schedule, track, and document therapy sessions with detailed notes and observations." %}</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="p-6 bg-cream-50 rounded-xl card-hover">
+          <div class="w-12 h-12 bg-sage-400 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">{% trans "Developmental Assessment" %}</h3>
+          <p class="text-gray-600">{% trans "Comprehensive questionnaires to track developmental milestones and identify areas for support." %}</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="p-6 bg-cream-50 rounded-xl card-hover">
+          <div class="w-12 h-12 bg-sky-400 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">{% trans "Family Collaboration" %}</h3>
+          <p class="text-gray-600">{% trans "Connect parents and therapists for seamless communication and coordinated care." %}</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="p-6 bg-cream-50 rounded-xl card-hover">
+          <div class="w-12 h-12 bg-sage-400 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">{% trans "Progress Tracking" %}</h3>
+          <p class="text-gray-600">{% trans "Visual progress reports and analytics to celebrate achievements and identify growth areas." %}</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="p-6 bg-cream-50 rounded-xl card-hover">
+          <div class="w-12 h-12 bg-sky-400 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">{% trans "Secure & Private" %}</h3>
+          <p class="text-gray-600">{% trans "Your family's data is protected with industry-standard security and privacy measures." %}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="about" class="py-20 px-4 bg-cream-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <div class="border-left-rtl grid grid-cols-2 gap-4">
+              <div class="text-center p-6 bg-sage-50 rounded-xl">
+                <div class="text-3xl font-bold text-sage-500 mb-1">500+</div>
+                <div class="text-gray-600 text-sm">{% trans "Families Supported" %}</div>
+              </div>
+              <div class="text-center p-6 bg-sky-50 rounded-xl">
+                <div class="text-3xl font-bold text-sky-400 mb-1">50+</div>
+                <div class="text-gray-600 text-sm">{% trans "Licensed Therapists" %}</div>
+              </div>
+              <div class="text-center p-6 bg-sky-50 rounded-xl">
+                <div class="text-3xl font-bold text-sky-400 mb-1">10K+</div>
+                <div class="text-gray-600 text-sm">{% trans "Sessions Completed" %}</div>
+              </div>
+              <div class="text-center p-6 bg-sage-50 rounded-xl">
+                <div class="text-3xl font-bold text-sage-500 mb-1">95%</div>
+                <div class="text-gray-600 text-sm">{% trans "Satisfaction Rate" %}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">{% trans "About Namaa" %}</h2>
+          <p class="text-lg text-gray-600 mb-6 leading-relaxed">{% trans "Namaa, meaning \"growth\" in Arabic, was founded with a simple mission: to support every child's journey." %}</p>
+          <p class="text-gray-600 mb-6 leading-relaxed">{% trans "We believe that when parents and therapists work together with the right tools, every child can reach their full potential. Our platform bridges the gap between clinical care and home life, ensuring consistent support across all environments." %}</p>
+          <div class="flex items-center gap-4">
+            <div class="flex -space-x-3">
+              <div class="w-10 h-10 rounded-full bg-sage-400 border-2 border-white flex items-center justify-center text-white font-semibold text-sm">S</div>
+              <div class="w-10 h-10 rounded-full bg-sky-400 border-2 border-white flex items-center justify-center text-white font-semibold text-sm">A</div>
+              <div class="w-10 h-10 rounded-full bg-sage-500 border-2 border-white flex items-center justify-center text-white font-semibold text-sm">M</div>
+            </div>
+            <span class="text-gray-600">{% trans "Trusted by families across Jordan" %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="py-20 px-4 bg-sage-400">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">{% trans "Ready to Start Your Journey?" %}</h2>
+      <p class="text-xl text-sage-100 mb-8">{% trans "Join hundreds of families who trust Namaa for their child's care." %}</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="{% url 'core:register' %}" class="px-8 py-3 bg-white text-sage-600 font-semibold rounded-lg hover:bg-cream-100 transition-colors shadow-lg">{% trans "Create Parent Account" %}</a>
+        <a href="{% url 'core:login' %}" class="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-sage-500 transition-colors">{% trans "Therapist Login" %}</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="py-20 px-4 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-12">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">{% trans "Get in Touch" %}</h2>
+          <p class="text-lg text-gray-600 mb-8">{% trans "Have questions about Namaa? We're here to help you get started on your child's journey." %}</p>
+
+          <div class="space-y-6">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-sage-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="text-gray-800 font-medium">{% trans "Email" %}</div>
+                <div class="text-gray-600">support@namaa.com</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-sage-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="text-gray-800 font-medium">{% trans "Phone" %}</div>
+                <div class="text-gray-600">+966 11 234 5678</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-sage-100 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="text-gray-800 font-medium">{% trans "Location" %}</div>
+                <div class="text-gray-600">{% trans "Amman, Jordan" %}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-cream-50 rounded-2xl p-8">
+          <form class="space-y-6">
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">{% trans "Name" %}</label>
+              <input type="text" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none" placeholder="{% trans 'Your name' %}" />
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">{% trans "Email" %}</label>
+              <input type="email" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none" placeholder="your@email.com" />
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2">{% trans "Message" %}</label>
+              <textarea rows="4" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none resize-none" placeholder="{% trans 'How can we help?' %}"></textarea>
+            </div>
+            <button type="submit" class="w-full px-6 py-3 bg-sage-400 text-white font-medium rounded-lg hover:bg-sage-500 transition-colors">{% trans "Send Message" %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <footer class="bg-gray-900 text-gray-400 py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-sage-400 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </div>
+            <span class="text-white font-semibold">Namaa</span>
+          </div>
+          <p class="text-sm">{% trans "Supporting every child's journey." %}</p>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-4">{% trans "Platform" %}</h4>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a href="#features" class="hover:text-white transition-colors">{% trans "Features" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "For Parents" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "For Therapists" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Pricing" %}</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-4">{% trans "Resources" %}</h4>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Help Center" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Blog" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Community" %}</a>
+            </li>
+            <li>
+              <a href="#contact" class="hover:text-white transition-colors">{% trans "Contact" %}</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-4">{% trans "Legal" %}</h4>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Privacy Policy" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Terms of Service" %}</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors">{% trans "Cookie Policy" %}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-800 pt-8 text-center text-sm">
+        <p>&copy; 2024 {% trans "Namaa" %}. {% trans "All rights reserved." %}</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn = document.getElementById('userMenuBtn')
+      const menu = document.getElementById('userDropdown')
+    
+      if (!btn || !menu) return
+    
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation()
+        menu.classList.toggle('hidden')
+      })
+    
+      document.addEventListener('click', function () {
+        menu.classList.add('hidden')
+      })
+    })
+  </script>
+{% endblock %}
