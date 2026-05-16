@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}
+  {% trans "My Profile" %} - {% trans "Namaa" %}
+{% endblock %}
+
+{% block content %}
+  <div class="flex">
+   
+    {% include "partials/parent_sidebar.html" %}
+    
+    <main class="ms-64 flex-1 p-8">
+      <header class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">{% trans "My Profile" %}</h1>
+          <p class="text-gray-600">{% trans "Manage your personal information" %}</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-end">
+            <p class="font-medium text-gray-800" id="headerName">
+              {% if request.user.is_authenticated %}
+                {{ request.user.first_name }} {{ request.user.last_name }}
+              {% else %}
+                {% trans "Loading..." %}
+              {% endif %}
+            </p>
+            <p class="text-sm text-gray-500" id="parentCode">
+              {% if request.user.is_authenticated and request.user.parent_profile %}
+                {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+              {% else %}
+                {% trans "Parent Code" %}: ---
+              {% endif %}
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg" id="headerAvatar">
+            {% if request.user.is_authenticated %}
+              {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+            {% else %}
+              --
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+            <div class="w-24 h-24 bg-sage-400 rounded-full flex items-center justify-center text-white text-3xl font-semibold mx-auto mb-4">{{ request.user.first_name|first|default:'' }}{{ request.user.last_name|first|default:'' }}</div>
+            <h2 class="text-xl font-semibold text-gray-800">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+            <p class="text-gray-500 mt-1">{% trans "Parent Account" %}</p>
+            <div class="mt-6 p-4 bg-cream-50 rounded-lg border border-sage-100">
+              <p class="text-sm text-gray-500 mb-1">{% trans "Parent Code" %}</p>
+              <p class="text-lg font-mono font-semibold text-sage-600">{{ parent.parent_shared_id }}</p>
+              <p class="text-xs text-gray-400 mt-2 leading-relaxed">{% trans "Share this code with your therapist to securely connect your child's developmental records." %}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-6">{% trans "Personal Information" %}</h3>
+            <form id="profileForm" method="POST" class="space-y-5">
+              {% csrf_token %}
+
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-gray-700 font-medium mb-2">{% trans "First Name" %}</label>
+                  <input type="text" name="first_name" placeholder="{% trans 'Enter your first name' %}" value="{{ request.user.first_name }}" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sage-300" required />
+                </div>
+
+                <div>
+                  <label class="block text-gray-700 font-medium mb-2">{% trans "Last Name" %}</label>
+                  <input type="text" name="last_name" placeholder="{% trans 'Enter your last name' %}" value="{{ request.user.last_name }}" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sage-300" required />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-gray-700 font-medium mb-2">{% trans "Email" %}</label>
+                <input type="email" value="{{ request.user.email }}" placeholder="{% trans 'your@email.com' %}" class="w-full px-4 py-3 border rounded-lg bg-gray-50" readonly />
+              </div>
+
+           
+              <div>
+                <label class="block text-gray-700 font-medium mb-2">{% trans "Phone Number" %}</label>
+                <input type="text" id="phone" name="phone" placeholder="{% trans 'e.g. +966 5X XXX XXXX' %}" value="{{ parent.phone_number }}" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sage-300" required />
+                <p id="phoneError" class="text-red-500 text-sm mt-1 hidden">{% trans "Invalid phone number format" %}</p>
+              </div>
+
+             
+              <div>
+                <label class="block text-gray-700 font-medium mb-2">{% trans "Address" %}</label>
+                <textarea name="address" rows="3" placeholder="{% trans 'Enter your full residential address' %}" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sage-300" required>{{ parent.address }}</textarea>
+              </div>
+
+        
+              <button type="submit" class="px-6 py-3 bg-sage-400 text-white font-semibold rounded-lg hover:bg-sage-500">{% trans "Save Changes" %}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const phoneInput = document.getElementById('phone')
+      const phoneError = document.getElementById('phoneError')
+      const form = document.getElementById('profileForm')
+    
+      const phoneRegex = /^\+?[0-9\s\-]{8,15}$/
+    
+      function validatePhone() {
+        const value = phoneInput.value.trim()
+    
+        if (!phoneRegex.test(value)) {
+          phoneError.classList.remove('hidden')
+          phoneInput.classList.add('border-red-500')
+          return false
+        } else {
+          phoneError.classList.add('hidden')
+          phoneInput.classList.remove('border-red-500')
+          return true
+        }
+      }
+    
+      phoneInput.addEventListener('input', validatePhone)
+    
+      form.addEventListener('submit', function (e) {
+        if (!validatePhone()) {
+          e.preventDefault()
+        }
+      })
+    })
+  </script>
+{% endblock %}
