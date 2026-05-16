@@ -2,7 +2,8 @@ from django.contrib import admin
 from .models import (
     Clinic, Therapist, Parent, Child, Form, Question,
     Answer, TreatmentPlan, Diagnosis, Session, Goal,
-    Treatment, Indicator, DrawingImage, ProgressRecord
+    Treatment, Indicator, TreatmentPlanIndicator, DrawingImage,
+    ProgressRecord
 )
 
 class QuestionInline(admin.TabularInline):
@@ -60,12 +61,23 @@ class TreatmentPlanAdmin(admin.ModelAdmin):
     search_fields = ('child__first_name', 'child__last_name')
     inlines = [DiagnosisInline, SessionInline, GoalInline, TreatmentInline]
 
+@admin.register(Indicator)
+class IndicatorAdmin(admin.ModelAdmin):
+    list_display = ('metric_name', 'description', 'created_at')
+    search_fields = ('metric_name',)
+
+@admin.register(TreatmentPlanIndicator)
+class TreatmentPlanIndicatorAdmin(admin.ModelAdmin):
+    list_display = ('treatment_plan', 'indicator', 'description', 'created_at')
+    list_filter = ('treatment_plan__therapist', 'indicator')
+    search_fields = ('indicator__metric_name', 'treatment_plan__child__first_name')
+
 @admin.register(ProgressRecord)
 class ProgressRecordAdmin(admin.ModelAdmin):
-    list_display = ('treatment_plan', 'indicator', 'indicator_value', 'date')
-    list_filter = ('indicator', 'date')
+    list_display = ('treatment_plan_indicator', 'indicator_value', 'date')
+    list_filter = ('date',)
     date_hierarchy = 'date'
-    search_fields = ('description', 'treatment_plan__child__first_name')
+    search_fields = ('treatment_plan_indicator__indicator__metric_name', 'treatment_plan_indicator__treatment_plan__child__first_name')
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
@@ -74,11 +86,10 @@ class AnswerAdmin(admin.ModelAdmin):
 
 @admin.register(DrawingImage)
 class DrawingImageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'upload_date', 'image_path')
+    list_display = ('id', 'child', 'draw_date', 'upload_date', 'image_path', 'emotional_state', 'confidence')
     readonly_fields = ('upload_date',)
 
 
-admin.site.register(Indicator)
 admin.site.register(Question)
 admin.site.register(Diagnosis)
 admin.site.register(Session)

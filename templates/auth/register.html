@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}
+  {% trans "Register" %} - {% trans "Namaa" %}
+{% endblock %}
+{% block content %}
+  <div class="min-h-screen flex items-center justify-center p-4 py-12">
+    <div class="w-full max-w-lg">
+
+
+      <div class="text-center mb-8">
+        <a href="/" class="inline-flex items-center gap-2">
+          <div class="w-12 h-12 bg-sage-400 rounded-xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+          </div>
+          <span class="text-2xl font-bold text-gray-800">{% trans "Namaa" %}</span>
+        </a>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl p-8 page-transition">
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-bold text-gray-800 mb-2">{% trans "Create Parent Account" %}</h1>
+          <p class="text-gray-600">{% trans "Join Namaa to support your child's journey" %}</p>
+        </div>
+
+       
+        <form id="registerForm" method="post" action="{% url 'core:register' %}" class="space-y-5">
+          {% csrf_token %}
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="firstName" class="block text-gray-700 font-medium mb-2">{% trans "First Name" %}</label>
+              <input type="text" id="firstName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors" name="first_name" placeholder="{% trans 'First Name' %}" required />
+              <p id="firstNameError" class="error-message hidden"></p>
+            </div>
+            <div>
+              <label for="lastName" class="block text-gray-700 font-medium mb-2">{% trans "Last Name" %}</label>
+              <input type="text" id="lastName" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors" name="last_name" placeholder="{% trans 'Last Name' %}" required />
+              <p id="lastNameError" class="error-message hidden"></p>
+            </div>
+          </div>
+
+ 
+          <div>
+            <label for="email" class="block text-gray-700 font-medium mb-2">{% trans "Email Address" %}</label>
+            <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors" placeholder="your@email.com" required />
+            <p id="emailError" class="error-message hidden"></p>
+          </div>
+
+       
+          <div>
+            <label for="phone" class="block text-gray-700 font-medium mb-2">{% trans "Phone Number" %}</label>
+            <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors" placeholder="+966 50 123 4567" required />
+            <p id="phoneError" class="error-message hidden"></p>
+          </div>
+
+         
+          <div>
+            <label for="address" class="block text-gray-700 font-medium mb-2">{% trans "Address" %}</label>
+            <textarea id="address" name="address" rows="2" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors resize-none" placeholder="{% trans 'Your home address' %}" required></textarea>
+            <p id="addressError" class="error-message hidden"></p>
+          </div>
+
+      
+          <div>
+            <label for="password" class="block text-gray-700 font-medium mb-2">{% trans "Password" %}</label>
+            <div class="relative">
+              <input type="password" id="password" name="password" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors pr-12" placeholder="{% trans 'Create a password' %}" required minlength="6" />
+              <button type="button" id="togglePassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="text-gray-500 text-sm mt-1">{% trans "Minimum 6 characters" %}</p>
+            <p id="passwordError" class="error-message hidden"></p>
+          </div>
+
+   
+          <div>
+            <label for="confirmPassword" class="block text-gray-700 font-medium mb-2">{% trans "Confirm Password" %}</label>
+            <div class="relative">
+              <input type="password" id="confirmPassword" name="confirmPassword" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none transition-colors pr-12" placeholder="{% trans 'Confirm your password' %}" required />
+              <button type="button" id="toggleConfirmPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              </button>
+            </div>
+            <p id="confirmPasswordError" class="error-message hidden"></p>
+          </div>
+
+          <!-- Terms -->
+          <div class="flex items-start gap-3">
+            <input type="checkbox" id="terms" class="w-4 h-4 mt-1 rounded border-gray-300 text-sage-400 focus:ring-sage-400" required />
+            <label for="terms" class="text-gray-600 text-sm">
+              {% trans "I agree to the" %} <a href="#" class="text-sage-500 hover:text-sage-600">{% trans "Terms of Service" %}</a> {% trans "and" %}
+              <a href="#" class="text-sage-500 hover:text-sage-600">{% trans "Privacy Policy" %}</a>
+            </label>
+          </div>
+          <p id="termsError" class="error-message hidden">{% trans "You must agree to the terms" %}</p>
+
+   
+          <div id="registerError" class="hidden p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{% trans "Registration failed. Please try again." %}</div>
+
+     
+          <div id="registerSuccess" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg text-green-600 text-sm">{% trans "Account created successfully! Redirecting to login..." %}</div>
+
+          <button type="submit" class="w-full py-3 bg-sage-400 text-white font-semibold rounded-lg hover:bg-sage-500 transition-colors flex items-center justify-center gap-2">
+            <span>{% trans "Create Account" %}</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+          </button>
+        </form>
+
+      
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            {% trans "Already have an account?" %}
+            <a href="{% url 'core:login' %}" class="text-sage-500 font-medium hover:text-sage-600">{% trans "Sign In" %}</a>
+          </p>
+        </div>
+
+    
+        <div class="mt-4 p-4 bg-sky-50 rounded-lg">
+          <p class="text-sm text-sky-700">
+            <strong>{% trans "Are you a therapist?" %}</strong> {% trans "Therapist accounts are created by clinic administrators. Please contact your clinic for access." %}
+          </p>
+        </div>
+      </div>
+
+  
+      <div class="mt-6 text-center">
+        <a href="/" class="text-gray-500 hover:text-gray-700 text-sm flex items-center justify-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>{% trans "Back to Home" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      initRegisterPage()
+    })
+    
+    function initRegisterPage() {
+      const form = document.getElementById('registerForm')
+    
+      const firstName = document.getElementById('firstName')
+      const lastName = document.getElementById('lastName')
+      const email = document.getElementById('email')
+      const phone = document.getElementById('phone')
+      const address = document.getElementById('address')
+      const password = document.getElementById('password')
+      const confirmPassword = document.getElementById('confirmPassword')
+      const terms = document.getElementById('terms')
+    
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      const phoneRegex = /^[0-9+\-\s()]{6,20}$/
+    
+      form.addEventListener('submit', function (e) {
+        let errors = 0
+    
+    
+        document.querySelectorAll('.error-message').forEach((el) => {
+          el.classList.add('hidden')
+          el.innerText = ''
+        })
+    
+        
+        const validations = [
+          {
+            condition: !firstName.value.trim(),
+            errorId: 'firstNameError',
+            message: 'First name is required'
+          },
+          {
+            condition: !lastName.value.trim(),
+            errorId: 'lastNameError',
+            message: 'Last name is required'
+          },
+          {
+            condition: !email.value.trim(),
+            errorId: 'emailError',
+            message: 'Email is required'
+          },
+          {
+            condition: email.value.trim() && !emailRegex.test(email.value),
+            errorId: 'emailError',
+            message: 'Please enter a valid email address'
+          },
+          {
+            condition: !phone.value.trim(),
+            errorId: 'phoneError',
+            message: 'Phone number is required'
+          },
+          {
+            condition: phone.value.trim() && !phoneRegex.test(phone.value),
+            errorId: 'phoneError',
+            message: 'Invalid phone number format'
+          },
+          {
+            condition: !address.value.trim(),
+            errorId: 'addressError',
+            message: 'Address is required'
+          },
+          {
+            condition: address.value.trim() && address.value.trim().length < 5,
+            errorId: 'addressError',
+            message: 'Address must be at least 5 characters'
+          },
+          {
+            condition: !password.value,
+            errorId: 'passwordError',
+            message: 'Password is required'
+          },
+          {
+            condition: password.value && password.value.length < 6,
+            errorId: 'passwordError',
+            message: 'Password must be at least 6 characters'
+          },
+          {
+            condition: confirmPassword.value !== password.value,
+            errorId: 'confirmPasswordError',
+            message: 'Passwords do not match'
+          },
+          {
+            condition: !terms.checked,
+            errorId: 'termsError',
+            message: 'You must accept the terms'
+          }
+        ]
+    
+        validations.forEach((rule) => {
+          if (rule.condition) {
+            showError(rule.errorId, rule.message)
+            errors++
+          }
+        })
+    
+        if (errors > 0) {
+          e.preventDefault()
+          return
+        }
+    
+        document.getElementById('registerSuccess').classList.remove('hidden')
+      })
+    
+      document.getElementById('togglePassword')?.addEventListener('click', function () {
+        password.type = password.type === 'password' ? 'text' : 'password'
+      })
+    
+      document.getElementById('toggleConfirmPassword')?.addEventListener('click', function () {
+        confirmPassword.type = confirmPassword.type === 'password' ? 'text' : 'password'
+      })
+    }
+    
+    function showError(id, message) {
+      const el = document.getElementById(id)
+      if (el) {
+        el.innerText = message
+        el.classList.remove('hidden')
+      }
+    }
+  </script>
+{% endblock %}

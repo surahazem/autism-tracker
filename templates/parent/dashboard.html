@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Parent Dashboard" %} - {% trans "Namaa" %}{% endblock %}
+
+{% block content %}
+  <div class="flex">
+ 
+    {% include 'partials/parent_sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="ms-64 flex-1 p-8">
+      <!-- Header -->
+      <header class="mb-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800" id="welcomeMessage">{% trans "Welcome back!" %}</h1>
+            <p class="text-gray-600">{% trans "Here's an overview of your family's progress" %}</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-end">
+              <p class="font-medium text-gray-800" id="userName">
+                {% if request.user.is_authenticated %}
+                  {{ request.user.first_name }} {{ request.user.last_name }}
+                {% else %}
+                  {% trans "Loading..." %}
+                {% endif %}
+              </p>
+              <p class="text-sm text-gray-500" id="parentCode">
+                {% if request.user.is_authenticated and request.user.parent_profile %}
+                  {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+                {% else %}
+                  {% trans "Parent Code" %}: ---
+                {% endif %}
+              </p>
+            </div>
+            <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg" id="userAvatar">
+              {% if request.user.is_authenticated %}
+                {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+              {% else %}
+                --
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </header>
+
+
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-sage-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-gray-800" id="childrenCount">{{ children_count }}</p>
+              <p class="text-gray-500 text-sm">{% trans "Children" %}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-gray-800" id="upcomingSessionsCount">{{ upcoming_sessions_count }}</p>
+              <p class="text-gray-500 text-sm">{% trans "Upcoming Sessions" %}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-sage-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-gray-800" id="activePlansCount">{{ active_plans_count }}</p>
+              <p class="text-gray-500 text-sm">{% trans "Active Plans" %}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-sky-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-gray-800" id="completedSessionsCount">{{ completed_sessions_count }}</p>
+              <p class="text-gray-500 text-sm">{% trans "Sessions Completed" %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Children Overview -->
+        <div class="bg-white rounded-xl shadow-sm">
+          <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">{% trans "My Children" %}</h2>
+              <a href="{% url 'core:my_children' %}" class="text-sage-500 text-sm font-medium hover:text-sage-600">{% trans "View All" %}</a>
+            </div>
+          </div>
+          <div class="p-6" id="childrenList">
+            {% for child in children %}
+              <div class="flex items-center justify-between mb-4 last:mb-0">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-sage-100 rounded-full flex items-center justify-center text-sage-600 font-medium">
+                    {{ child.first_name|first|upper }}
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-800">{{ child.first_name }} {{ child.last_name }}</p>
+                    <p class="text-xs text-gray-500">{% trans "Born:" %} {{ child.date_of_birth }}</p>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <div class="text-center py-8 text-gray-500">{% trans "No children found." %}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Upcoming Sessions -->
+        <div class="bg-white rounded-xl shadow-sm">
+          <div class="p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-800">{% trans "Upcoming Sessions" %}</h2>
+              <a href="{% url 'core:sessions' %}" class="text-sage-500 text-sm font-medium hover:text-sage-600">{% trans "View All" %}</a>
+            </div>
+          </div>
+          <div class="p-6" id="upcomingSessionsList">
+            {% for session in upcoming_sessions %}
+              <div class="flex items-center justify-between mb-4 last:mb-0">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center text-sky-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-800">{% blocktrans %}{{ child_name }}'s Session{% endblocktrans %}</p>
+                    <p class="text-xs text-gray-500">{{ session.date|date:"M d, Y @ H:i" }}</p>
+                  </div>
+                </div>
+                <span class="px-2 py-1 bg-sky-50 text-sky-600 text-xs font-medium rounded">{% trans "Upcoming" %}</span>
+              </div>
+            {% empty %}
+              <div class="text-center py-8 text-gray-500">{% trans "No upcoming sessions." %}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mt-8 bg-white rounded-xl shadow-sm p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">{% trans "Quick Actions" %}</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <a href="{% url 'core:assessment' %}" class="flex flex-col items-center p-4 bg-cream-50 rounded-lg hover:bg-cream-100 transition-colors">
+            <div class="w-12 h-12 bg-sage-400 rounded-lg flex items-center justify-center mb-2">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700 text-center">{% trans "Complete Assessment" %}</span>
+          </a>
+          <a href="{% url 'core:treatment_plans' %}" class="flex flex-col items-center p-4 bg-cream-50 rounded-lg hover:bg-cream-100 transition-colors">
+            <div class="w-12 h-12 bg-sky-400 rounded-lg flex items-center justify-center mb-2">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700 text-center">{% trans "View Treatment Plans" %}</span>
+          </a>
+          <a href="{% url 'core:sessions' %}" class="flex flex-col items-center p-4 bg-cream-50 rounded-lg hover:bg-cream-100 transition-colors">
+            <div class="w-12 h-12 bg-sage-400 rounded-lg flex items-center justify-center mb-2">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700 text-center">{% trans "Session Schedule" %}</span>
+          </a>
+          <a href="{% url 'core:parent_profile' %}" class="flex flex-col items-center p-4 bg-cream-50 rounded-lg hover:bg-cream-100 transition-colors">
+            <div class="w-12 h-12 bg-sky-400 rounded-lg flex items-center justify-center mb-2">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-medium text-gray-700 text-center">{% trans "Update Profile" %}</span>
+          </a>
+        </div>
+      </div>
+    </main>
+    </div>
+  {% endblock %}
+
+  {% block scripts %}
+    <script src="{% static 'js/mock-data.js' %}"></script>
+    <script src="{% static 'js/auth.js' %}"></script>
+    <script src="{% static 'js/parent-dashboard.js' %}"></script>
+  {% endblock %}

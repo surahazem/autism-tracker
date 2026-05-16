@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sessions" %} - Namaa{% endblock %}
+
+{% block content %}
+  <div class="flex">
+    <!-- Sidebar -->
+    {% include 'partials/parent_sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="ms-64 flex-1 p-8">
+      <header class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">{% trans "Sessions" %}</h1>
+          <p class="text-gray-600">{% trans "View all therapy sessions for your children" %}</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-end">
+            <p class="font-medium text-gray-800" id="headerName">
+              {% if request.user.is_authenticated %}
+                {{ request.user.first_name }} {{ request.user.last_name }}
+              {% else %}
+                {% trans "Loading..." %}
+              {% endif %}
+            </p>
+            <p class="text-sm text-gray-500" id="parentCode">
+              {% if request.user.is_authenticated and request.user.parent_profile %}
+                {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+              {% else %}
+                {% trans "Parent Code" %}: ---
+              {% endif %}
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg" id="headerAvatar">
+            {% if request.user.is_authenticated %}
+              {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+            {% else %}
+              --
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+      <!-- Filters -->
+      <form method="GET" class="bg-white rounded-xl shadow-sm p-4 mb-6 flex flex-wrap items-center gap-4">
+        <div class="flex flex-col gap-1">
+          <label for="child" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{% trans "Child" %}</label>
+          <select name="child" id="child" class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-500" onchange="this.form.submit()">
+            <option value="all" {% if selected_child == 'all' %}selected{% endif %}>{% trans "All Children" %}</option>
+            {% for child in children %}
+              <option value="{{ child.id }}" {% if selected_child == child.id|stringformat:"s" %}selected{% endif %}>{{ child.first_name }} {{ child.last_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="flex flex-col gap-1">
+          <label for="status" class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{% trans "Status" %}</label>
+          <select name="status" id="status" class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-500" onchange="this.form.submit()">
+            <option value="all" {% if selected_status == 'all' %}selected{% endif %}>{% trans "All Statuses" %}</option>
+            <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>{% trans "Completed" %}</option>
+            <option value="scheduled" {% if selected_status == 'scheduled' %}selected{% endif %}>{% trans "Scheduled" %}</option>
+            <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>{% trans "Cancelled" %}</option>
+          </select>
+        </div>
+        
+        <div class="flex-1"></div>
+        
+        <div class="flex items-center gap-6 self-end pb-1 border-s ps-6 border-gray-100">
+          <span class="text-sm text-gray-500">{% trans "Legend" %}:</span>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span class="text-sm text-gray-600">{% trans "Completed" %}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+            <span class="text-sm text-gray-600">{% trans "Scheduled" %}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+            <span class="text-sm text-gray-600">{% trans "Cancelled" %}</span>
+          </div>
+        </div>
+      </form>
+
+      <div id="sessionsContainer" class="grid gap-4">
+        {% for session in sessions %}
+          <div class="bg-white rounded-xl shadow-sm p-6 flex items-center justify-between hover:shadow-md transition-shadow text-start">
+            <div class="flex items-center gap-6">
+              <div class="text-center min-w-[60px]">
+                <p class="text-sm font-semibold text-gray-500 uppercase">{{ session.date|date:"M" }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ session.date|date:"d" }}</p>
+              </div>
+              <div class="w-px h-12 bg-gray-100"></div>
+              <div>
+                <h3 class="font-bold text-gray-800">{{ session.treatment_plan.child.first_name }} {{ session.treatment_plan.child.last_name }}</h3>
+                <p class="text-sm text-gray-500 flex items-center gap-2">
+                  <span class="flex items-center gap-1"><i class="far fa-clock"></i> {{ session.date|date:"P" }}</span>
+                  <span>•</span>
+                  <span>{{ session.treatment_plan.therapist.user.get_full_name }}</span>
+                </p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-8">
+              <div class="text-end hidden sm:block">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">{% trans "Clinic" %}</p>
+                <p class="text-sm font-medium text-gray-700">{{ session.treatment_plan.therapist.clinic.name }}</p>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                  {% if session.status == 'completed' %}bg-blue-50 text-blue-600
+                  {% elif session.status == 'scheduled' %}bg-orange-50 text-orange-600
+                  {% else %}bg-red-50 text-red-600{% endif %}">
+                  {{ session.get_status_display }}
+                </span>
+                <i class="fas fa-chevron-right text-gray-300 rtl:scale-x-[-1]"></i>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="bg-white rounded-xl shadow-sm p-12 text-center text-gray-500">
+            <div class="mb-4">
+              <i class="fas fa-calendar-times text-4xl text-gray-200"></i>
+            </div>
+            <p class="text-lg font-medium text-gray-600">{% trans "No sessions found" %}</p>
+            <p class="text-sm">{% trans "Try adjusting your filters to find what you're looking for." %}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </main>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

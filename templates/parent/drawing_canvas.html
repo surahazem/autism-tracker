@@ -1,0 +1,629 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Drawing Canvas – {{ child.first_name }} | Namaa{% endblock %}
+
+{% block head_extra %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* ---- Layout ---- */
+  .canvas-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ---- Sidebar ---- */
+  .tools-sidebar {
+    width: 88px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    gap: 8px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  .tools-sidebar .logo {
+    width: 52px;
+    height: 52px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
+
+  .tool-section-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    width: 100%;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .tool-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 22px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .tool-btn:hover {
+    background: rgba(255,255,255,0.35);
+    transform: scale(1.08);
+  }
+
+  .tool-btn.active {
+    background: white;
+    color: #764ba2;
+    border-color: rgba(255,255,255,0.8);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  .tool-btn.danger:hover { background: rgba(239,68,68,0.35); }
+  .tool-btn.warning:hover { background: rgba(234,179,8,0.35); }
+  .tool-btn.success-btn:hover { background: rgba(34,197,94,0.35); }
+
+  /* Brush sizes */
+  .brush-size-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .brush-size-btn:hover, .brush-size-btn.active {
+    background: white;
+    border-color: white;
+  }
+  .brush-dot {
+    background: #764ba2;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .brush-size-btn.active .brush-dot { background: #764ba2; }
+
+  /* Color palette */
+  .color-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+  }
+  .color-swatch:hover {
+    transform: scale(1.18);
+    border-color: rgba(255,255,255,0.7);
+  }
+  .color-swatch.active {
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
+    transform: scale(1.15);
+  }
+
+  /* Custom color picker */
+  .color-picker-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid rgba(255,255,255,0.5);
+    position: relative;
+  }
+  .color-picker-wrap input[type="color"] {
+    width: 52px;
+    height: 52px;
+    border: none;
+    padding: 0;
+    margin-left: -8px;
+    margin-top: -8px;
+    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+  }
+  .color-picker-inner {
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ---- Canvas area ---- */
+  .canvas-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .canvas-topbar {
+    height: 56px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .child-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .child-avatar-sm {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .child-name {
+    font-weight: 700;
+    color: white;
+    font-size: 15px;
+  }
+  .child-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+  .btn-topbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-back {
+    background: rgba(255,255,255,0.2);
+    color: white;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.32); color: white; }
+
+  .btn-clear {
+    background: rgba(239,68,68,0.25);
+    color: #fca5a5;
+  }
+  .btn-clear:hover { background: rgba(239,68,68,0.4); }
+
+  .btn-save {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    box-shadow: 0 4px 15px rgba(34,197,94,0.3);
+  }
+  .btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(34,197,94,0.4);
+  }
+  .btn-save:active { transform: translateY(0); }
+  .btn-save.loading { opacity: 0.7; pointer-events: none; }
+
+  .canvas-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #drawingCanvas {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    cursor: crosshair;
+    touch-action: none;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  /* ---- Recent drawings panel ---- */
+  .recent-panel {
+    width: 110px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 8px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .recent-panel-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+  .recent-thumb {
+    width: 88px;
+    height: 66px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+  .recent-thumb:hover {
+    border-color: white;
+    transform: scale(1.04);
+  }
+
+  /* Separator */
+  .tool-sep {
+    width: 40px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    margin: 2px 0;
+  }
+
+  /* Spinner animation */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="canvas-layout">
+
+  <!-- ======= Tools Sidebar ======= -->
+  <aside class="tools-sidebar" id="toolsSidebar">
+    <!-- Logo -->
+    <div class="logo">
+      <svg width="28" height="28" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M12 20h9"/><path stroke-linecap="round" d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+    </div>
+
+    <div class="tool-sep"></div>
+
+    <!-- Tools -->
+    <span class="tool-section-label">Tools</span>
+
+    <button class="tool-btn active" id="btnBrush" title="Brush" onclick="setTool('brush')">🖌️</button>
+    <button class="tool-btn" id="btnEraser" title="Eraser" onclick="setTool('eraser')">🧹</button>
+
+    <div class="tool-sep"></div>
+
+    <!-- Brush sizes -->
+    <span class="tool-section-label">Size</span>
+
+    <button class="brush-size-btn active" id="size-sm" onclick="setBrushSize(4)" title="Small">
+      <div class="brush-dot" style="width:6px;height:6px;"></div>
+    </button>
+    <button class="brush-size-btn" id="size-md" onclick="setBrushSize(10)" title="Medium">
+      <div class="brush-dot" style="width:12px;height:12px;"></div>
+    </button>
+    <button class="brush-size-btn" id="size-lg" onclick="setBrushSize(20)" title="Large">
+      <div class="brush-dot" style="width:20px;height:20px;"></div>
+    </button>
+    <button class="brush-size-btn" id="size-xl" onclick="setBrushSize(38)" title="Extra Large">
+      <div class="brush-dot" style="width:30px;height:30px;"></div>
+    </button>
+
+    <div class="tool-sep"></div>
+
+    <!-- Colors -->
+    <span class="tool-section-label">Colors</span>
+
+
+    <div class="color-swatch active" style="background:#E74C3C" data-color="#E74C3C" onclick="setColor('#E74C3C', this)" title="Red"></div>
+    <div class="color-swatch" style="background:#E67E22" data-color="#E67E22" onclick="setColor('#E67E22', this)" title="Orange"></div>
+    <div class="color-swatch" style="background:#F1C40F" data-color="#F1C40F" onclick="setColor('#F1C40F', this)" title="Yellow"></div>
+    <div class="color-swatch" style="background:#2ECC71" data-color="#2ECC71" onclick="setColor('#2ECC71', this)" title="Green"></div>
+    <div class="color-swatch" style="background:#3498DB" data-color="#3498DB" onclick="setColor('#3498DB', this)" title="Blue"></div>
+    <div class="color-swatch" style="background:#9B59B6" data-color="#9B59B6" onclick="setColor('#9B59B6', this)" title="Purple"></div>
+    <div class="color-swatch" style="background:#1ABC9C" data-color="#1ABC9C" onclick="setColor('#1ABC9C', this)" title="Teal"></div>
+    <div class="color-swatch" style="background:#E91E63" data-color="#E91E63" onclick="setColor('#E91E63', this)" title="Pink"></div>
+    <div class="color-swatch" style="background:#FF5722" data-color="#FF5722" onclick="setColor('#FF5722', this)" title="Deep Orange"></div>
+    <div class="color-swatch" style="background:#795548" data-color="#795548" onclick="setColor('#795548', this)" title="Brown"></div>
+    <div class="color-swatch" style="background:#607D8B" data-color="#607D8B" onclick="setColor('#607D8B', this)" title="Grey Blue"></div>
+    <div class="color-swatch" style="background:#000000" data-color="#000000" onclick="setColor('#000000', this)" title="Black"></div>
+    <!-- Custom color picker -->
+    <div class="color-picker-wrap" title="Custom color">
+      <div class="color-picker-inner"></div>
+      <input type="color" id="customColor" value="#E74C3C" onchange="setColor(this.value, null)">
+    </div>
+
+    <div class="tool-sep"></div>
+
+    <!-- Actions -->
+    <span class="tool-section-label">Actions</span>
+    <button class="tool-btn warning" onclick="undoLast()" title="Undo">↩️</button>
+  </aside>
+
+  <!-- ======= Main Canvas Area ======= -->
+  <main class="canvas-main">
+    <!-- Top bar -->
+    <div class="canvas-topbar">
+      <div class="child-badge">
+        <div class="child-avatar-sm">{{ child.first_name|first|upper }}</div>
+        <div>
+          <div class="child-name">{{ child.first_name }}'s Canvas</div>
+          <div class="child-label">Draw freely!</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <a href="{% url 'core:my_children' %}" class="btn-topbar btn-back">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
+          Back
+        </a>
+        <button class="btn-topbar btn-clear" onclick="clearCanvas()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+          Clear
+        </button>
+        <button class="btn-topbar btn-save" id="saveBtn" onclick="saveDrawing()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          Save &amp; Analyze
+        </button>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrapper">
+      <canvas id="drawingCanvas"></canvas>
+    </div>
+  </main>
+
+  <!-- ======= Recent Drawings Panel ======= -->
+  {% if recent_drawings %}
+  <aside class="recent-panel">
+    <span class="recent-panel-label">Recent</span>
+    {% for d in recent_drawings %}
+    <a href="{% url 'core:drawing_results' d.id %}" title="View results" class="recent-thumb">
+      <img src="{{ d.image_path.url }}" alt="Drawing {{ forloop.counter }}" class="recent-thumb">
+    </a>
+    {% endfor %}
+  </aside>
+  {% endif %}
+</div>
+
+<!-- Hidden form for submitting canvas data -->
+<form id="canvasForm" method="POST" action="{% url 'core:drawing_canvas' child.id %}" style="display:none;">
+  {% csrf_token %}
+  <input type="hidden" id="canvasDataInput" name="canvas_data">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // =========================================================
+  // Canvas Setup
+  // =========================================================
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  const wrapper = canvas.parentElement;
+
+  let currentColor = '#E74C3C';
+  let currentBrushSize = 4;
+  let currentTool = 'brush';
+  let isDrawing = false;
+  let lastX = 0, lastY = 0;
+  let history = [];
+  const MAX_HISTORY = 30;
+
+  function resizeCanvas() {
+    const wRect = wrapper.getBoundingClientRect();
+    const W = Math.floor(wRect.width - 32);
+    const H = Math.floor(wRect.height - 32);
+
+    // Save current image before resizing
+    const tempImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    canvas.width = W;
+    canvas.height = H;
+    fillWhite();
+    if (tempImg.width > 0) ctx.putImageData(tempImg, 0, 0);
+  }
+
+  function fillWhite() {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // =========================================================
+  // Drawing logic
+  // =========================================================
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const sx = canvas.width / rect.width;
+    const sy = canvas.height / rect.height;
+    if (e.touches && e.touches.length > 0) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * sx,
+        y: (e.touches[0].clientY - rect.top) * sy,
+      };
+    }
+    return {
+      x: (e.clientX - rect.left) * sx,
+      y: (e.clientY - rect.top) * sy,
+    };
+  }
+
+  function saveSnapshot() {
+    if (history.length >= MAX_HISTORY) history.shift();
+    history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    isDrawing = true;
+    const pos = getPos(e);
+    lastX = pos.x; lastY = pos.y;
+    saveSnapshot();
+    // Draw a dot on click/tap
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, brushRadius(), 0, Math.PI * 2);
+    ctx.fillStyle = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
+    ctx.fill();
+  }
+
+  function draw(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const pos = getPos(e);
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.strokeStyle = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
+    ctx.lineWidth = currentBrushSize * 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Fill circles along path to avoid gaps
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, brushRadius(), 0, Math.PI * 2);
+    ctx.fillStyle = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
+    ctx.fill();
+
+    lastX = pos.x; lastY = pos.y;
+  }
+
+  function stopDraw(e) {
+    isDrawing = false;
+  }
+
+  function brushRadius() { return currentBrushSize; }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDraw);
+  canvas.addEventListener('mouseleave', stopDraw);
+
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', stopDraw);
+
+  // =========================================================
+  // Tool controls
+  // =========================================================
+  function setTool(tool) {
+    currentTool = tool;
+    document.getElementById('btnBrush').classList.toggle('active', tool === 'brush');
+    document.getElementById('btnEraser').classList.toggle('active', tool === 'eraser');
+    canvas.style.cursor = tool === 'eraser' ? 'cell' : 'crosshair';
+  }
+
+  function setColor(color, el) {
+    currentColor = color;
+    currentTool = 'brush';
+    setTool('brush');
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    if (el) el.classList.add('active');
+    document.getElementById('customColor').value = color;
+  }
+
+  function setBrushSize(size) {
+    currentBrushSize = size;
+    document.querySelectorAll('.brush-size-btn').forEach(b => b.classList.remove('active'));
+    const map = { 4: 'sm', 10: 'md', 20: 'lg', 38: 'xl' };
+    const el = document.getElementById(`size-${map[size]}`);
+    if (el) el.classList.add('active');
+  }
+
+  function clearCanvas() {
+    saveSnapshot();
+    fillWhite();
+  }
+
+  function undoLast() {
+    if (history.length > 0) {
+      ctx.putImageData(history.pop(), 0, 0);
+    }
+  }
+
+  // =========================================================
+  // Save & Submit
+  // =========================================================
+  function saveDrawing() {
+    const btn = document.getElementById('saveBtn');
+    btn.classList.add('loading');
+    btn.innerHTML = `<span class="spin">⏳</span> Analyzing…`;
+
+    // Export canvas to base64 PNG
+    const dataURL = canvas.toDataURL('image/png');
+    document.getElementById('canvasDataInput').value = dataURL;
+    document.getElementById('canvasForm').submit();
+  }
+
+  // =========================================================
+  // Keyboard shortcuts
+  // =========================================================
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'z') undoLast();
+    if (e.key === 'b') setTool('brush');
+    if (e.key === 'e') setTool('eraser');
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); clearCanvas(); }
+  });
+</script>
+{% endblock %}

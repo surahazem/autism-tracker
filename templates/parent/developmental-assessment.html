@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}Developmental Assessment - Namaa{% endblock %}
+
+{% block content %}
+  <div class="flex">
+    <!-- Sidebar -->
+    {% include 'partials/parent_sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="ms-64 flex-1 p-8">
+      <header class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">{% trans "Developmental Assessment" %}</h1>
+          <p class="text-gray-600">{% trans "Monitor and record your child's developmental progress" %}</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-end">
+            <p class="font-medium text-gray-800" id="headerName">
+              {% if request.user.is_authenticated %}
+                {{ request.user.first_name }} {{ request.user.last_name }}
+              {% else %}
+                {% trans "Loading..." %}
+              {% endif %}
+            </p>
+            <p class="text-sm text-gray-500" id="parentCode">
+              {% if request.user.is_authenticated and request.user.parent_profile %}
+                {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+              {% else %}
+                {% trans "Parent Code" %}: ---
+              {% endif %}
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg" id="headerAvatar">
+            {% if request.user.is_authenticated %}
+              {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+            {% else %}
+              --
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+      <!-- Child Selector -->
+      <section class="bg-white rounded-xl shadow-sm p-4 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <h2 class="text-xl font-bold text-gray-800">{% trans "Select a Child" %}</h2>
+            <p class="text-gray-500 text-sm">{% trans "Choose the child you wish to complete the assessment for." %}</p>
+          </div>
+          <div class="relative w-full md:w-72">
+            <select id="childSelect" 
+                    onchange="location.href='?child_id=' + this.value"
+                    class="w-full pl-4 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 font-medium focus:ring-2 focus:ring-sage-500 focus:border-sage-500 focus:bg-white outline-none appearance-none transition-all cursor-pointer">
+              <option value="" {% if not selected_child %}selected{% endif %}>{% trans "--- Select Child ---" %}</option>
+              {% for child in children %}
+                <option value="{{ child.id }}" {% if selected_child.id == child.id %}selected{% endif %}>
+                  {{ child.first_name }} {{ child.last_name }}
+                </option>
+              {% endfor %}
+            </select>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {% if selected_child %}
+        {% if form %}
+          <!-- Assessment Info -->
+          <div class="bg-gradient-to-r from-sage-50 to-white border border-sage-100 rounded-xl p-6 mb-8 flex items-start gap-5">
+            <div class="w-12 h-12 bg-sage-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-sage-200">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="text-xl font-bold text-sage-900">{{ form.title }}</h3>
+                {% if has_answered %}
+                  <span class="px-3 py-1 bg-sage-500 text-white text-xs font-bold rounded-full uppercase tracking-wider shadow-sm">{% trans "Completed" %}</span>
+                {% else %}
+                  <span class="px-3 py-1 bg-amber-400 text-white text-xs font-bold rounded-full uppercase tracking-wider shadow-sm">{% trans "Pending" %}</span>
+                {% endif %}
+              </div>
+              <p class="text-sage-700 leading-relaxed max-w-3xl">
+                {% blocktrans with child_name=selected_child.first_name %}This assessment for <span class="font-bold underline">{{ child_name }}</span> helps our clinical team tailor the perfect intervention strategy. Please provide detailed and honest reflections on your child's daily interactions and responses.{% endblocktrans %}
+              </p>
+            </div>
+          </div>
+
+          <!-- Alert for Completed Assessment -->
+          {% if has_answered %}
+            <div class="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-center gap-3 text-blue-700">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+              <p class="text-sm font-medium">{% trans "You have already completed this assessment. Changes are no longer permitted." %}</p>
+            </div>
+          {% endif %}
+
+          <!-- Questions Form -->
+          <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div class="grid gap-6">
+              {% for question in questions %}
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                  <div class="flex items-start gap-4">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-100 text-sage-600 flex items-center justify-center font-bold text-sm">
+                      {{ forloop.counter }}
+                    </span>
+                    <div class="flex-1">
+                      <label class="block text-gray-800 font-bold mb-3 text-lg">{{ question.text }}</label>
+                      <textarea 
+                        name="question_{{ question.id }}"
+                        rows="4" 
+                        {% if has_answered %}disabled{% endif %}
+                        placeholder="{% trans 'Share your observations here...' %}"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:ring-2 focus:ring-sage-500 focus:border-sage-500 focus:bg-white outline-none transition-all resize-none {% if has_answered %}opacity-80 bg-gray-100 cursor-not-allowed{% endif %}"
+                        required
+                      >{% if has_answered %}{{ question.existing_answer }}{% endif %}</textarea>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            {% if not has_answered %}
+              <div class="mt-12 flex items-center justify-between p-8 bg-white rounded-xl border border-gray-100 shadow-sm">
+                <div class="hidden md:block">
+                  <p class="text-gray-500 text-sm">{% trans "Make sure all questions are answered before submitting." %}</p>
+                </div>
+                <button type="submit" class="w-full md:w-auto px-10 py-4 bg-sage-500 text-white font-bold rounded-xl hover:bg-sage-600 transform hover:-translate-y-0.5 transition-all shadow-lg shadow-sage-200 flex items-center justify-center gap-3">
+                  <span>{% trans "Submit Assessment" %}</span>
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                  </svg>
+                </button>
+              </div>
+            {% endif %}
+          </form>
+        {% else %}
+          <div class="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-20 text-center">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">{% trans "No Assessment Found" %}</h3>
+            <p class="text-gray-500">{% trans "There are no assessments currently assigned to this child." %}</p>
+          </div>
+        {% endif %}
+      {% else %}
+        <!-- Empty State -->
+        <div class="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-20 text-center animate-pulse-subtle">
+          <div class="w-24 h-24 bg-sage-50 rounded-full flex items-center justify-center mx-auto mb-6 text-sage-400">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-2">{% trans "Ready to Start?" %}</h3>
+          <p class="text-gray-500 max-w-sm mx-auto">{% trans "Please select one of your children from the dropdown above to begin or view their developmental assessment." %}</p>
+        </div>
+      {% endif %}
+    </main>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <!-- Scripts removed as logic is now handled by Django and clean JS -->
+{% endblock %}

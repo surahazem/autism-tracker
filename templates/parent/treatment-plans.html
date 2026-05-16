@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Treatment Plans" %} - Namaa{% endblock %}
+
+{% block content %}
+  <div class="flex">
+    <!-- Sidebar -->
+    {% include 'partials/parent_sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="ms-64 flex-1 p-8">
+      <header class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">{% trans "Treatment Plans" %}</h1>
+          <p class="text-gray-600">{% trans "View treatment plans and goals for your children" %}</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-end">
+            <p class="font-medium text-gray-800" id="headerName">
+              {% if request.user.is_authenticated %}
+                {{ request.user.first_name }} {{ request.user.last_name }}
+              {% else %}
+                {% trans "Loading..." %}
+              {% endif %}
+            </p>
+            <p class="text-sm text-gray-500" id="parentCode">
+              {% if request.user.is_authenticated and request.user.parent_profile %}
+                {% trans "Parent Code" %}: {{ request.user.parent_profile.parent_shared_id }}
+              {% else %}
+                {% trans "Parent Code" %}: ---
+              {% endif %}
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-sage-400 rounded-full flex items-center justify-center text-white font-semibold text-lg" id="headerAvatar">
+            {% if request.user.is_authenticated %}
+              {{ request.user.first_name|make_list|first|upper }}{{ request.user.last_name|make_list|first|upper }}
+            {% else %}
+              --
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+      <div id="plansContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for plan in treatment_plans %}
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover border border-gray-100 text-start">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-sage-100 rounded-full flex items-center justify-center text-sage-600 font-bold text-xl">
+                  {{ plan.child.first_name|first|upper }}
+                </div>
+                <div>
+                  <h3 class="text-lg font-bold text-gray-800">{% blocktrans with name=plan.child.first_name %}{{ name }}'s Plan{% endblocktrans %}</h3>
+                  <p class="text-sm text-gray-500">{% trans "Therapist" %}: {{ plan.therapist.user.get_full_name }}</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 bg-green-50 text-green-600 text-xs font-medium rounded-full">{% trans "Active" %}</span>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{% trans "Current Goals" %}</h4>
+                <ul class="space-y-2">
+                  {% for goal in plan.goals.all|slice:":2" %}
+                    <li class="text-sm text-gray-700 flex items-start gap-2">
+                      <span class="w-1.5 h-1.5 bg-sage-400 rounded-full mt-1.5"></span>
+                      {{ goal.target_description }}
+                    </li>
+                  {% empty %}
+                    <li class="text-sm text-gray-400">{% trans "No goals defined yet." %}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              <div class="pt-4 border-t border-gray-50 flex justify-between items-center">
+                <div class="text-sm">
+                  <span class="text-gray-500">{% trans "Progress" %}:</span>
+                  <span class="font-semibold text-gray-800">{{ plan.plan_indicators.count }} {% trans "Indicators" %}</span>
+                </div>
+                <a href="{% url 'core:treatment_plan_detail' plan.id %}" class="text-sage-600 hover:text-sage-700 font-medium text-sm transition-colors">{% trans "View Details" %} →</a>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-span-full text-center py-20 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-800">{% trans "No treatment plans yet" %}</h3>
+            <p class="text-gray-500">{% trans "When your child is assigned a treatment plan, it will appear here." %}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </main>
+  </div>
+{% endblock %}
+
+
+{% block scripts %}
+  <script src="{% static 'js/mock-data.js' %}"></script>
+  <script src="{% static 'js/auth.js' %}"></script>
+  <script src="{% static 'js/parent-dashboard.js' %}"></script>
+{% endblock %}
